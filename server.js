@@ -175,7 +175,6 @@ app.listen(PORT, (err) => {
 
 //   users.addGame(username);
 
-//   //To help with grading, the server will console.log() the username and the chosen secret word whenever a new game is started for a player
 //   console.log("Start new game - user name:" + username + ", secret word: " + users.nameAndGame[username].word);
   
 //   res.json(users.getGameState(username));
