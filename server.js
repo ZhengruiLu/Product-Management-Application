@@ -21,20 +21,20 @@ con.connect((err) =>{
     }
 })
 
-app.post('/api/session', (req, res) => {
+app.post('/post', (req, res) => {
     const first_name = req.body.first_name;
     const last_name = req.body.last_name;
     const password = req.body.password;
     const username = req.body.username;
 
     con.query(
-        'insert into user values(?,?,?)',
+        'insert into user(first_name, last_name, password, username) values(?,?,?,?)',
         [first_name, last_name, password, username],
         (err,result)=>{
             if(err){
                 console.log(err)
             } else {
-                console.log("POSTED")
+                res.send("POSTED")
             }
         }
     )
