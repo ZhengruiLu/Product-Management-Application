@@ -21,20 +21,32 @@ con.connect((err) =>{
     }
 })
 
-app.post('/api/session', (req, res) => {
+function isValidUsername(username) {
+    let isValid = true;
+    isValid = isValid && username.trim();
+    isValid = isValid && username.match(/^[A-Za-z]+$/);
+    return isValid;
+}
+
+app.post('/v1/user', (req, res) => {
     const first_name = req.body.first_name;
     const last_name = req.body.last_name;
     const password = req.body.password;
     const username = req.body.username;
 
+    if(!isValidUsername(first_name) && isValidUsername(last_name)) {
+        res.status(400).json({ error: 'Bad-Request' });
+        return;
+    }
+
     con.query(
-        'insert into user values(?,?,?)',
+        'insert into user(first_name, last_name, password, username) values(?,?,?,?)',
         [first_name, last_name, password, username],
         (err,result)=>{
             if(err){
                 console.log(err)
             } else {
-                console.log("POSTED")
+                res.json("User created")
             }
         }
     )
