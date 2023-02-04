@@ -111,6 +111,23 @@ app.put('/v1/user/:userId', (req, res) => {
     )
 });
 
+//health check
+const http = require('http');
+
+const router = express.Router();
+
+router.use((req, res, next) => {
+  res.header('Access-Control-Allow-Methods', 'GET');
+  next();
+});
+
+router.get('/health', (req, res) => {
+  res.status(200).send('Ok');
+});
+
+app.use('/healthz', router);
+
+
 app.listen(PORT, (err) => {
     if(err){
         console.log(err)
