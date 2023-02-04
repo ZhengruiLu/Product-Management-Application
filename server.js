@@ -21,12 +21,64 @@ con.connect((err) =>{
     }
 })
 
-function isValidUsername(username) {
-    let isValid = true;
-    isValid = isValid && username.trim();
-    isValid = isValid && username.match(/^[A-Za-z]+$/);
-    return isValid;
+function ValidateEmail(input) {
+    var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+  
+    if (input.match(validRegex)) {
+      return true;
+    } 
+    
+    return false;
 }
+
+// get user account information
+app.get('/v1/user/:userId', (req, res) => {
+    const userId = req.params.userId;
+
+    if(!userId) {
+        res.status(401).json({ error: 'Unauthorized' });
+        return;
+    }
+
+    con.query(
+        'select * from user where id=?',
+        [userId],
+        (err,result, fields)=>{
+            if(err){
+                console.log(err)
+            } else {
+                const r = JSON.parse(JSON.stringify(result))
+                // console.log(r[0])
+                // console.log(r[0].first_name)
+                res.json(result)
+            }
+        }
+    )
+});
+
+// app.get('/healthz', (req, res) => {
+//     const userId = req.params.userId;
+
+//     if(!userId) {
+//         res.status(401).json({ error: 'Unauthorized' });
+//         return;
+//     }
+
+//     con.query(
+//         'select * from user where id=?',
+//         [userId],
+//         (err,result, fields)=>{
+//             if(err){
+//                 console.log(err)
+//             } else {
+//                 const r = JSON.parse(JSON.stringify(result))
+//                 console.log(r[0])
+//                 console.log(r[0].first_name)
+//                 res.json(result)
+//             }
+//         }
+//     )
+// });
 
 app.post('/v1/user', (req, res) => {
     const first_name = req.body.first_name;
@@ -34,7 +86,7 @@ app.post('/v1/user', (req, res) => {
     const password = req.body.password;
     const username = req.body.username;
 
-    if(!isValidUsername(first_name) && isValidUsername(last_name)) {
+    if(!ValidateEmail(username)) {
         res.status(400).json({ error: 'Bad-Request' });
         return;
     }
@@ -50,31 +102,34 @@ app.post('/v1/user', (req, res) => {
             }
         }
     )
-//   const { username } = req.body;
-
-//   if(!users.isValidUsername(username)) {
-//     res.status(400).json({ error: 'required-username' });
-//     return;
-//   }
-//   if(username.toLowerCase() === 'dog') {
-//     res.status(403).json({ error: 'auth-insufficient' });
-//     return;
-//   }
-//   const sid = sessions.addSession(username);
-
-//   const existingUserData = users.getGameState(username);
-
-//   //check if user have game state or not, if not, create a new one
-//   if (!existingUserData) {
-//     users.addGame(username);
-//   }
-
-//   //To help with grading, the server will console.log() the username and the chosen secret word whenever a new game is started for a player
-//   console.log("Home page - user name:" + username + ", secret word: " + users.nameAndGame[username].word);
-
-//   res.cookie('sid', sid);
-//   res.json(users.getGameState(username));
 });
+
+// update user account information
+app.put('/v1/user/:userId', (req, res) => {
+    const userId = req.params.userId;
+    const first_name = req.body.first_name;
+    const last_name = req.body.last_name;
+    const password = req.body.password;
+    const username = req.body.username;
+
+    con.query(
+        'update user set first_name=?, last_name=?, password=?, username=? where id=?',
+        [first_name, last_name, password, username, userId],
+        (err,result)=>{
+            if(err){
+                console.log(err)
+            } else {
+                if (result.affectedRows == 0) {
+                    res.send("id not present")
+                } else {
+                    res.json("User info updated")
+                    console.log(result)
+                }
+            }
+        }
+    )
+});
+
 
 app.listen(PORT, (err) => {
     if(err){
