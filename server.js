@@ -58,6 +58,7 @@ app.get('/v1/user/:userId', (req, res) => {
 
 
 app.post('/v1/user', (req, res) => {
+
     const first_name = req.body.first_name;
     const last_name = req.body.last_name;
     const password = req.body.password;
@@ -100,12 +101,16 @@ app.put('/v1/user/:userId', (req, res) => {
             if(err){
                 console.log(err)
             } else {
+
                 if (result.affectedRows == 0) {
                     res.send("id not present")
                 } else {
                     res.json("User info updated")
                     console.log(result)
                 }
+
+                res.send("POSTED")
+
             }
         }
     )
