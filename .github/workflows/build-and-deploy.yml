@@ -7,6 +7,16 @@ on:
     branches: [ main ]
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Build with Maven
+        working-directory: ./ProductManager
+
   build-ami:
       runs-on: ubuntu-latest
       steps:
@@ -28,14 +38,3 @@ jobs:
             AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
             AWS_DEFAULT_REGION: us-west-1
           run: packer build scripts/java.pkr.hcl
-
-  build:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Build with Maven
-        working-directory: ./ProductManager
-
