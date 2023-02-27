@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: amazonlinux:latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -19,7 +19,7 @@ jobs:
         run: mvn package
 
   build-ami:
-    runs-on: amazonlinux:latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
