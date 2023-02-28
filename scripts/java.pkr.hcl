@@ -67,11 +67,12 @@ build {
     inline = [
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
+      "yes | sudo yum install maven",
       "sudo yum install -y mariadb-server",
       "sudo systemctl start mariadb",
       "sudo systemctl enable mariadb",
       "echo $'\n Y\n ChangChang@1\n ChangChang@1\n Y\n Y\n Y\n Y\n' | sudo mysql_secure_installation",
-      "sudo mysql -u root -pChangChang@1 -e 'CREATE DATABASE usertestdb;'",
+      "sudo mysql -u root -pChangChang@1 -e 'CREATE DATABASE usertestdb;exit;'",
 
       "sudo yum clean all",
     ]
