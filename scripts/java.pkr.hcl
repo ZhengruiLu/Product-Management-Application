@@ -71,9 +71,9 @@ build {
       "sudo yum install -y mariadb-server",
       "sudo systemctl start mariadb",
       "sudo systemctl enable mariadb",
-      "echo $'\n Y\n ChangChang@1\n ChangChang@1\n Y\n Y\n Y\n Y\n' | sudo mysql_secure_installation",
-      "sudo mysql -u root -pChangChang@1 -e 'CREATE DATABASE usertestdb;exit;'",
-
+      "echo $'\nY\nChangChang@1\nChangChang@1\nY\nY\nY\nY\n' | sudo mysql_secure_installation",
+      "sudo mysql -u root -pChangChang@1 -e 'CREATE DATABASE usertestdb;'",
+      "sudo mysql -u root -pChangChang@1 -e 'exit;'",
       "sudo yum clean all",
     ]
   }
