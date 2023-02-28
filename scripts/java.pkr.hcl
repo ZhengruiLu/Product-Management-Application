@@ -18,13 +18,22 @@ variable "subnet_id" {
   default = "subnet-07f1c68d20abc9489"
 }
 
+variable "shared_account_id" {
+  type    = string
+  default = "859583877906"
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.aws_region}"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
   ami_regions = [
-    "us-west-1",
+    "${var.aws_region}",
+  ]
+
+  ami_users = [
+    "${var.shared_account_id}" //demo
   ]
 
   aws_polling {
@@ -48,26 +57,6 @@ source "amazon-ebs" "my-ami" {
 build {
   sources = ["source.amazon-ebs.my-ami"]
 
-  #  provisioner "file" {
-  #    source      = "./mysql_secure_installation.sh"
-  #    destination = "/tmp/mysql_secure_installation.sh"
-  #  }
-  #
-  #  provisioner "file" {
-  #    source      = "./ProductManager-0.0.1-SNAPSHOT.jar"
-  #    destination = "/opt/ProductManager/ProductManager-0.0.1-SNAPSHOT.jar"
-  #  }
-
-  #    provisioner "file" {
-  #      source      = "./mysql_secure_installation.sh"
-  #      destination = "/tmp/mysql_secure_installation.sh"
-  #    }
-  #
-  #    provisioner "file" {
-  #      source      = "./ProductManager-0.0.1-SNAPSHOT.jar"
-  #      destination = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
-  #    }
-
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
@@ -76,26 +65,15 @@ build {
 
 
     inline = [
-      "sudo yum update -y",                        //pass
-      "yes | sudo yum install java-1.8.0-openjdk", //add
+      "sudo yum update -y",
+      "yes | sudo yum install java-1.8.0-openjdk",
       "sudo yum install -y mariadb-server",
       "sudo systemctl start mariadb",
       "sudo systemctl enable mariadb",
-      #      "sudo mkdir /mysql_secure && sudo chmod 777 /mysql_secure",
-      #      "sudo mv /tmp/mysql_secure_installation.sh /mysql_secure/mysql_secure_installation.sh",
-      #      "sudo cp mysql_secure_installation.sh ~/mysql_secure/",
-      #      "sudo chmod +x /mysql_secure/mysql_secure_installation.sh",
-      #      "sudo bash mysql_secure/mysql_secure_installation.sh",
       "echo $'\n Y\n ChangChang@1\n ChangChang@1\n Y\n Y\n Y\n Y\n' | sudo mysql_secure_installation",
       "sudo mysql -u root -pChangChang@1 -e 'CREATE DATABASE usertestdb;'",
 
       "sudo yum clean all",
-      #      "sudo mkdir -p /opt/ProductManager",
-      #      "sudo mv /tmp/ProductManager-0.0.1-SNAPSHOT.jar /opt/ProductManager/ProductManager-0.0.1-SNAPSHOT.jar",
-
-      #      "sudo cp ProductManager-0.0.1-SNAPSHOT.jar /opt/ProductManager/",
-      #      "sudo chmod 755 /opt/ProductManager/",
-      #      "sudo java -jar /opt/ProductManager/ProductManager-0.0.1-SNAPSHOT.jar",
     ]
   }
 }
