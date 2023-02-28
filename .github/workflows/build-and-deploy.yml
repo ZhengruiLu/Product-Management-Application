@@ -24,8 +24,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Packer
-        uses: hashicorp/setup-packer
+      - name: Setup HashiCorp Packer
+        uses: hashicorp/setup-packer@v2.0.0
+        with:
+          version: latest
 
       - name: Format Packer Template
         run: packer fmt scripts/java.pkr.hcl
