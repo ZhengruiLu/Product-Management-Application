@@ -69,7 +69,7 @@ build {
 
 
     inline = [
-      "set -euxo pipefail",
+      #      "set -euxo pipefail",
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
       "yes | sudo yum install maven",
