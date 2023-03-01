@@ -62,7 +62,7 @@ build {
   sources = ["source.amazon-ebs.my-ami"]
 
   provisioner "shell" {
-    script = "./java.sh"
+    script = "scripts/java.pkr.hcl"
   }
 
   provisioner "file" {
