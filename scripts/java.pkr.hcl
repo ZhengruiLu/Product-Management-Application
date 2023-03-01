@@ -18,13 +18,26 @@ variable "subnet_id" {
   default = "subnet-07f1c68d20abc9489"
 }
 
+variable "shared_account_id" {
+  type    = string
+  default = "859583877906"
+}
+
+locals {
+  app_name = "ProductManager"
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.aws_region}"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
   ami_regions = [
-    "us-west-1",
+    "${var.aws_region}",
+  ]
+
+  ami_users = [
+    "${var.shared_account_id}" //demo
   ]
 
   aws_polling {
@@ -48,39 +61,40 @@ source "amazon-ebs" "my-ami" {
 build {
   sources = ["source.amazon-ebs.my-ami"]
 
-  provisioner "file" {
-    source      = "./mysql_secure_installation.sh"
-    destination = "/scripts/mysql_secure_installation.sh"
-  }
-
-  provisioner "file" {
-    source      = "./ProductManager-0.0.1-SNAPSHOT.jar"
-    destination = "/opt/ProductManager/ProductManager-0.0.1-SNAPSHOT.jar"
-  }
-
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1"
     ]
 
+
     inline = [
-      "sudo yum update -y",                        //pass
-      "yes | sudo yum install java-1.8.0-openjdk", //add
+      #      "set -euxo pipefail",
+      "sudo yum update -y",
+      "yes | sudo yum install java-1.8.0-openjdk",
+      "yes | sudo yum install maven",
       "sudo yum install -y mariadb-server",
       "sudo systemctl start mariadb",
       "sudo systemctl enable mariadb",
-      #      "sudo mkdir /scripts && sudo chmod 777 /scripts",
-      #      "sudo cp mysql_secure_installation.sh ~/scripts/",
-      "sudo chmod +x /home/ec2-user/scripts/mysql_secure_installation.sh",
-      "sudo bash /home/ec2-user/scripts/mysql_secure_installation.sh",
+      "echo $'\nY\nChangChang@1\nChangChang@1\nY\nY\nY\nY\n' | sudo mysql_secure_installation",
       "sudo mysql -u root -pChangChang@1 -e 'CREATE DATABASE usertestdb;'",
       "sudo yum clean all",
-      #      "sudo mkdir -p /opt/ProductManager",
-      #      "sudo cp ProductManager-0.0.1-SNAPSHOT.jar /opt/ProductManager/",
-      "sudo chmod 755 /opt/ProductManager/",
-      "sudo java -jar /opt/ProductManager/ProductManager-0.0.1-SNAPSHOT.jar",
+      "sudo mkdir /opt/deployment",
+      "sudo mkdir /var/log/apps",
+      "sudo chown -R $USER:$USER /opt/deployment",
+      "sudo chown -R $USER:$USER /var/log/apps"
     ]
+    #    script = "scripts/java.pkr.hcl"
+  }
+
+  provisioner "file" {
+    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
+    destination = "/opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar"
+  }
+
+  post-processor "manifest" {
+    output     = "manifest.json"
+    strip_path = true
   }
 }
 
