@@ -2,6 +2,10 @@ name: build-and-deploy
 
 on:
   pull_request:
+    branches: [ main ]
+    types: [ opened, synchronize ]
+    head_repository:
+      owner: ZhengruiLu
 
 jobs:
   pack-java-jar:
