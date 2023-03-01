@@ -23,6 +23,10 @@ variable "shared_account_id" {
   default = "859583877906"
 }
 
+locals {
+  app_name = "ProductManager"
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.aws_region}"
@@ -65,6 +69,7 @@ build {
 
 
     inline = [
+      #      "set -euxo pipefail",
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
       "yes | sudo yum install maven",
@@ -74,7 +79,22 @@ build {
       "echo $'\nY\nChangChang@1\nChangChang@1\nY\nY\nY\nY\n' | sudo mysql_secure_installation",
       "sudo mysql -u root -pChangChang@1 -e 'CREATE DATABASE usertestdb;'",
       "sudo yum clean all",
+      "sudo mkdir /opt/deployment",
+      "sudo mkdir /var/log/apps",
+      "sudo chown -R $USER:$USER /opt/deployment",
+      "sudo chown -R $USER:$USER /var/log/apps"
     ]
+    #    script = "scripts/java.pkr.hcl"
+  }
+
+  provisioner "file" {
+    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
+    destination = "/opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar"
+  }
+
+  post-processor "manifest" {
+    output     = "manifest.json"
+    strip_path = true
   }
 }
 
