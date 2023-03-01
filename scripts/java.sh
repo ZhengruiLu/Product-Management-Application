@@ -1,7 +1,7 @@
 #!/bin/bash
 
-set -e, -u, -x, -o pipefail
-
+#set -e, -u, -x, -o pipefail
+set -euxo pipefail
 sudo yum update -y
 yes | sudo yum install java-1.8.0-openjdk
 yes | sudo yum install maven
