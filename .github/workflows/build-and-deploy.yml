@@ -24,7 +24,7 @@ jobs:
           name: ProductManager-0.0.1-SNAPSHOT.jar
           path: ./ProductManager/target/ProductManager-0.0.1-SNAPSHOT.jar
 
-  build-ami:
+  validate-packer-template:
     runs-on: ubuntu-latest
     needs: pack-java-jar
     steps:
@@ -50,6 +50,20 @@ jobs:
 
       - name: Validate Packer Template
         run: packer validate scripts/java.pkr.hcl
+
+
+  build-ami:
+    runs-on: ubuntu-latest
+    needs: validate-packer-template
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true && github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup HashiCorp Packer
+        uses: hashicorp/setup-packer@v2.0.0
+        with:
+          version: latest
 
       - name: Build Image with Packer
         env:
