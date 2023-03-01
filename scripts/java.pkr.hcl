@@ -27,6 +27,11 @@ locals {
   app_name = "ProductManager"
 }
 
+variable "jar_source_path" {
+  type    = string
+  default = "ProductManager/target/ProductManager-0.0.1-SNAPSHOT.jar"
+}
+
 # https://www.packer.io/plugins/builders/amazon/ebs
 source "amazon-ebs" "my-ami" {
   region          = "${var.aws_region}"
@@ -69,7 +74,6 @@ build {
 
 
     inline = [
-      #      "set -euxo pipefail",
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
       "yes | sudo yum install maven",
@@ -84,11 +88,10 @@ build {
       "sudo chown -R $USER:$USER /opt/deployment",
       "sudo chown -R $USER:$USER /var/log/apps"
     ]
-    #    script = "scripts/java.pkr.hcl"
   }
 
   provisioner "file" {
-    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
+    source      = "${var.jar_source_path}"
     destination = "/opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar"
   }
 
