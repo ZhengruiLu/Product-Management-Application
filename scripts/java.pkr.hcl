@@ -69,7 +69,6 @@ build {
 
 
     inline = [
-      #      "set -euxo pipefail",
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
       "yes | sudo yum install maven",
@@ -82,14 +81,36 @@ build {
       "sudo mkdir /opt/deployment",
       "sudo mkdir /var/log/apps",
       "sudo chown -R $USER:$USER /opt/deployment",
-      "sudo chown -R $USER:$USER /var/log/apps"
+      "sudo chown -R $USER:$USER /var/log/apps",
+      "sudo chown -R $USER:$USER /etc/systemd/system",
     ]
-    #    script = "scripts/java.pkr.hcl"
   }
 
   provisioner "file" {
     source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
     destination = "/opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar"
+  }
+
+  provisioner "file" {
+    source      = "./ProductManager.service"
+    destination = "/etc/systemd/system/ProductManager.service"
+  }
+
+  #systemd setup
+  provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "CHECKPOINT_DISABLE=1"
+    ]
+
+    inline = [
+      "sudo useradd myapplication",
+      "sudo chown myapplication:myapplication /opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar",
+      "sudo chmod 500 /opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar",
+      "sudo systemctl enable ProductManager.service",
+      "sudo systemctl start ProductManager.service",
+      "sudo systemctl status ProductManager.service",
+    ]
   }
 
   post-processor "manifest" {
