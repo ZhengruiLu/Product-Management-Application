@@ -37,6 +37,9 @@ jobs:
       - name: touch jar
         run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
 
+      - name: touch service
+        run: touch /tmp/ProductManager.service
+
       - name: Format Packer Template
         run: packer fmt scripts/java.pkr.hcl
 
