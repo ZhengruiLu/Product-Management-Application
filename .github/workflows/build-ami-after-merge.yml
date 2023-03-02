@@ -31,7 +31,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ProductManager.service
-          path: ./scripts/ProductManager.service
+          path: ${{ github.workspace }}/scripts/ProductManager.service
 
       - name: Download Service
         uses: actions/download-artifact@v2
