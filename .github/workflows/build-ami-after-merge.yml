@@ -24,6 +24,8 @@ jobs:
 
   upload-service:
     runs-on: ubuntu-latest
+    needs: pack-java-jar
+
     steps:
       - name: Save Service
         uses: actions/upload-artifact@v2
@@ -42,7 +44,7 @@ jobs:
 
   build-ami:
     runs-on: ubuntu-latest
-    needs: pack-java-jar, upload-service
+    needs: upload-service
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
