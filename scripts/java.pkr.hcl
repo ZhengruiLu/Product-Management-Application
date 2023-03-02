@@ -92,7 +92,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "/tmp/ProductManager.service"
+    source      = "/scripts/ProductManager.service"
     destination = "/etc/systemd/system/ProductManager.service"
   }
 
