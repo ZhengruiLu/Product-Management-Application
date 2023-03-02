@@ -44,8 +44,8 @@ jobs:
       - name: Copy JAR Artifact to Packer Directory
         run: cp /tmp/ProductManager-0.0.1-SNAPSHOT.jar scripts/
 
-      - name: Copy Service to Tmp
-        run: cp /scripts/ProductManager.service tmp/
+      - name: Copy .service file to tmp directory
+        run: cp webapp/scripts/ProductManager.service tmp/
 
       - name: Build Image with Packer
         env:
