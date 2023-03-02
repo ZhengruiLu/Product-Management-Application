@@ -92,7 +92,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "${{ github.workspace }}/scripts/ProductManager.service"
+    source      = "/tmp/ProductManager.service"
     destination = "/etc/systemd/system/ProductManager.service"
   }
 
