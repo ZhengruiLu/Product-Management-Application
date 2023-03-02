@@ -4,6 +4,8 @@ Tools: SpringBoot
 Database: MySQL
 IDE: Intellij
 Test: Postman
+Autorun: Systemd
+...
 
 ## b. Build and Deploy instructions for the web application.
 
