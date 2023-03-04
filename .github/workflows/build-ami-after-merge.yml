@@ -2,7 +2,9 @@ name: build ami after merge
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - a04-webapp
 
 jobs:
   pack-java-jar:
