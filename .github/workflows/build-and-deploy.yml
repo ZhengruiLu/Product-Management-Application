@@ -1,7 +1,7 @@
 name: build-and-deploy
 
 on:
-  push:
+  pull request:
     branches:
       - main
       - a04-webapp
