@@ -7,6 +7,8 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "product")
@@ -41,7 +43,13 @@ public class Product {
     @Column(name = "owner_user_id")
     private Integer owner_user_id;
 
+    @OneToMany(mappedBy = "product")
+    private List<Image> images = new ArrayList<>();
+
+
     public Product() {
+    }
+    public Product(Integer productId) {
     }
 
     public Integer getId() {
@@ -114,5 +122,13 @@ public class Product {
 
     public void setOwner_user_id(Integer owner_user_id) {
         this.owner_user_id = owner_user_id;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
     }
 }
