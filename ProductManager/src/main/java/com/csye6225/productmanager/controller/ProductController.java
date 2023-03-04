@@ -29,6 +29,8 @@ public class ProductController {
     public ResponseEntity<Product> getProductById(
             @PathVariable(value = "productId")Integer id
     ) {
+
+
         Optional<Product> optionalProduct = repo.findById(id);
         Product product;
 

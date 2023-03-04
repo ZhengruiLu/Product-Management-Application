@@ -34,8 +34,10 @@ public class Product {
     @Column(name = "date_added", updatable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @CreationTimestamp
     private Timestamp date_added;
-    @Column(name = "date_last_updated", updatable = true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
+
+    // @Column(name = "date_last_updated", nullable = true, updatable = true, columnDefinition="on update current_timestamp")
     @UpdateTimestamp
+    @Column(name = "date_last_updated")
     private Timestamp date_last_updated;
 
     @Column(name = "owner_user_id")
