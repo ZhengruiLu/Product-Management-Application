@@ -70,7 +70,7 @@ build {
 
     inline = [
       "sudo yum update -y",
-      "yes | sudo yum install java-1.8.0-openjdk",
+#      "yes | sudo yum install java-1.8.0-openjdk",
       #      "yes | sudo yum install maven",
       #      "sudo yum install -y mariadb-server",
       #      "sudo systemctl start mariadb",
