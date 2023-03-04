@@ -16,8 +16,8 @@ jobs:
         with:
           version: latest
 
-      - name: touch jar
-        run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
+#      - name: touch jar
+#        run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
 
 #      - name: touch service
 #        run: touch /tmp/ProductManager.service
