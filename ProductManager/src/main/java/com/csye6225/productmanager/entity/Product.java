@@ -41,7 +41,15 @@ public class Product {
     private Timestamp date_last_updated;
 
     @Column(name = "owner_user_id")
-    private Integer owner_user_id;
+    private Integer ownerUserId;
+
+    public Integer getOwnerUserId() {
+        return ownerUserId;
+    }
+
+    public void setOwnerUserId(Integer ownerUserId) {
+        this.ownerUserId = ownerUserId;
+    }
 
     public Product() {
     }
@@ -110,11 +118,4 @@ public class Product {
         this.date_last_updated = date_last_updated;
     }
 
-    public Integer getOwner_user_id() {
-        return owner_user_id;
-    }
-
-    public void setOwner_user_id(Integer owner_user_id) {
-        this.owner_user_id = owner_user_id;
-    }
 }

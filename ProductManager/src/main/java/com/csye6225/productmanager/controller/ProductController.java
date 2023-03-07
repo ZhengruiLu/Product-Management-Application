@@ -6,14 +6,12 @@ import com.csye6225.productmanager.repository.ProductRepository;
 import com.csye6225.productmanager.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.jpa.repository.support.QuerydslJpaRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 
@@ -72,14 +70,18 @@ public class ProductController {
             @RequestParam(value ="description", required = true)String description,
             @RequestParam(value ="sku", required = true)String sku,
             @RequestParam(value ="manufacturer", required = true)String manufacturer,
-            @RequestParam(value ="quantity", required = true)Integer quantity
-    ) {
+            @RequestParam(value ="quantity", required = true)Integer quantity,
+            Authentication authentication
+            ) {
         Product product = new Product();
+//        Integer userId = ((MyUserDetails) authentication.getPrincipal()).getId();
+
         try {
             product.setName(name);
             product.setDescription(description);
             product.setSku(sku);
             product.setManufacturer(manufacturer);
+//            product.setOwnerUserId(userId);
 
             if (quantity >= 0 && quantity <= 100)
                 product.setQuantity(quantity);
