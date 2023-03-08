@@ -33,7 +33,13 @@ public class UserController {
             @PathVariable("userId") Integer userId,
             Authentication authentication
     ) {
-        String currUserName = authentication.getName();
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currUser = userDetails.getUser();
+        Integer currUserId = currUser.getId();
+
+        if (!currUserId.equals(userId)){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
 
         Optional<User> optionalUser = repo.findById(userId);
         User user;
@@ -43,11 +49,7 @@ public class UserController {
             return new ResponseEntity<User>(HttpStatus.FORBIDDEN);
         }
 
-        if (currUserName.equals(user.getUsername())) {
-            return new ResponseEntity<User>(user, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<User>(HttpStatus.FORBIDDEN);
-        }
+        return new ResponseEntity<User>(user, HttpStatus.OK);
     }
 
     @PostMapping(value = "/v1/user", produces = MediaType.APPLICATION_JSON_VALUE)
