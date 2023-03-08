@@ -1,6 +1,9 @@
 package com.csye6225.productmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -8,6 +11,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.sql.Timestamp;
 
+@JsonIgnoreProperties({"owner_user"})
 @Entity
 @Table(name = "product")
 public class Product {
@@ -43,13 +47,25 @@ public class Product {
     @Column(name = "owner_user_id")
     private Integer ownerUserId;
 
+
+    @ManyToOne
+    @JoinColumn(name = "owner_user", nullable = false, updatable = false)
+    private User user;
+
     public Integer getOwnerUserId() {
         return ownerUserId;
     }
 
-    public void setOwnerUserId(Integer ownerUserId) {
-        this.ownerUserId = ownerUserId;
+    public User getUser() {
+        return user;
     }
+
+    public void setUser(User user) {
+        this.user = user;
+        this.ownerUserId = user.getId();
+    }
+
+
 
     public Product() {
     }

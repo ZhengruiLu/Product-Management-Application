@@ -3,6 +3,8 @@ package com.csye6225.productmanager.service;
 import com.csye6225.productmanager.entity.User;
 import com.csye6225.productmanager.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,6 +22,16 @@ public class UserService {
             return optionalUser.get();
         } else {
             throw new UserNotFoundException("User not found with id: " + userId);
+        }
+    }
+
+    public User findByUserName(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByUsername(username);
+
+        if (user != null) {
+           return user;
+        } else {
+            throw new UsernameNotFoundException("user not exits with the name: " + username);
         }
     }
 

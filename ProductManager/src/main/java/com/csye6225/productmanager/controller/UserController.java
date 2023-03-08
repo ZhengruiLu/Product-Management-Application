@@ -3,6 +3,7 @@ package com.csye6225.productmanager.controller;
 import com.csye6225.productmanager.config.DuplicateSkuException;
 import com.csye6225.productmanager.entity.User;
 import com.csye6225.productmanager.repository.UserRepository;
+import com.csye6225.productmanager.service.CustomUserDetails;
 import com.csye6225.productmanager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -83,42 +86,53 @@ public class UserController {
     @PutMapping(value = "/v1/user/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<String> updateUserById(
             @PathVariable(value = "userId")Integer userId,
-            @RequestParam(value = "first_name", required = false)String firstName,
-            @RequestParam(value = "last_name", required = false)String lastName,
-            @RequestParam(value = "password", required = false)String password,
-            @RequestParam(value = "username", required = false)String username
+            @RequestParam(value = "first_name")String firstName,
+            @RequestParam(value = "last_name")String lastName,
+            @RequestParam(value = "password")String password,
+            @RequestParam(value = "username")String username,
+            Authentication authentication
     ) {
+        if (!isValid(userId)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         //find user by id
         Optional<User> optionalUser = repo.findById(userId);
         User user;
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        User currUser = userDetails.getUser();
+        Integer currUserId = currUser.getId();
+
+        if (!currUserId.equals(user.getId())){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
         try {
-            if (firstName == null && lastName == null
-                    && password == null && username == null)
+            if (firstName == null || lastName == null
+                    || password == null || username == null)
                 return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 
             //update user info
-            if (firstName != null)
-                user.setFirstName(firstName);
-            if (lastName != null)
-                user.setLastName(lastName);
-            if (password != null)
-                user.setPassword(password);
-            if (username != null)
-                user.setUsername(username);
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setPassword(password);
+            user.setUsername(username);
 
             repo.save(user);
 
-            return new ResponseEntity<String>("User update successfully!", HttpStatus.NO_CONTENT);
+            return new ResponseEntity<String>("User updated successfully!", HttpStatus.NO_CONTENT);
         }
         catch (DataIntegrityViolationException ex) {
             throw new DuplicateSkuException("User with username " + user.getUsername() + " already exists");
         }
+    }
+
+    private boolean isValid(Integer id) {
+        if (id == null || id < 0) return false;
+        return true;
     }
 }
 

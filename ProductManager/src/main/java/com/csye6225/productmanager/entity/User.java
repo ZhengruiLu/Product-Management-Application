@@ -1,14 +1,20 @@
 package com.csye6225.productmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
+import java.util.List;
 
 @Entity
 @Table(name = "user")
 public class User {
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER,mappedBy = "user")
+    private List<Product> product;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,7 +34,7 @@ public class User {
     @Column(name = "account_updated")
     @UpdateTimestamp
     private Timestamp account_updated;
-    
+
     public Integer getId() {
         return id;
     }
@@ -96,5 +102,13 @@ public class User {
 
     public void setAccount_updated(Timestamp account_updated) {
         this.account_updated = account_updated;
+    }
+
+    public List<Product> getProduct() {
+        return product;
+    }
+
+    public void setProduct(List<Product> product) {
+        this.product = product;
     }
 }
