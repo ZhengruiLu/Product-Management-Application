@@ -4,6 +4,7 @@ on:
   pull_request:
     branches:
       - main
+      - a04-webapp
 
 jobs:
   validate-packer-template:
@@ -16,12 +17,6 @@ jobs:
         uses: hashicorp/setup-packer@v2.0.0
         with:
           version: latest
-
-#      - name: touch jar
-#        run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
-
-#      - name: touch service
-#        run: touch /tmp/ProductManager.service
 
       - name: Format Packer Template
         run: packer fmt scripts/java.pkr.hcl
