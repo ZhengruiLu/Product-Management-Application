@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - a04-webapp
+      - modify-a05
 
 jobs:
   build-ami:
