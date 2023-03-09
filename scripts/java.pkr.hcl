@@ -71,12 +71,12 @@ build {
     inline = [
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
-      "yes | sudo yum install maven",
-      "sudo yum install -y mariadb-server",
-      "sudo systemctl start mariadb",
-      "sudo systemctl enable mariadb",
-      "echo $'\nY\nChangChang@1\nChangChang@1\nY\nY\nY\nY\n' | sudo mysql_secure_installation",
-      "sudo mysql -u root -pChangChang@1 -e 'CREATE DATABASE usertestdb;'",
+#      "yes | sudo yum install maven",
+#      "sudo yum install -y mariadb-server",
+#      "sudo systemctl start mariadb",
+#      "sudo systemctl enable mariadb",
+#      "echo $'\nY\nChangChang@1\nChangChang@1\nY\nY\nY\nY\n' | sudo mysql_secure_installation",
+#      "sudo mysql -u root -pChangChang@1 -e 'CREATE DATABASE usertestdb;'",
       "sudo yum clean all",
       "sudo mkdir /opt/deployment",
       "sudo mkdir /var/log/apps",
@@ -86,32 +86,32 @@ build {
     ]
   }
 
-  provisioner "file" {
-    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
-    destination = "/opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar"
-  }
+#  provisioner "file" {
+#    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
+#    destination = "/opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar"
+#  }
 
-  provisioner "file" {
-    source      = "./scripts/ProductManager.service"
-    destination = "/etc/systemd/system/ProductManager.service"
-  }
+#  provisioner "file" {
+#    source      = "./scripts/ProductManager.service"
+#    destination = "/etc/systemd/system/ProductManager.service"
+#  }
 
   #systemd setup
-  provisioner "shell" {
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "CHECKPOINT_DISABLE=1"
-    ]
-
-    inline = [
-      "sudo useradd myapplication",
-      "sudo chown myapplication:myapplication /opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar",
-      "sudo chmod 500 /opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar",
-      "sudo systemctl enable ProductManager.service",
-      "sudo systemctl start ProductManager.service",
-      "sudo systemctl status ProductManager.service",
-    ]
-  }
+#  provisioner "shell" {
+#    environment_vars = [
+#      "DEBIAN_FRONTEND=noninteractive",
+#      "CHECKPOINT_DISABLE=1"
+#    ]
+#
+#    inline = [
+#      "sudo useradd myapplication",
+#      "sudo chown myapplication:myapplication /opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar",
+#      "sudo chmod 500 /opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar",
+#      "sudo systemctl enable ProductManager.service",
+#      "sudo systemctl start ProductManager.service",
+#      "sudo systemctl status ProductManager.service",
+#    ]
+#  }
 
   post-processor "manifest" {
     output     = "manifest.json"
