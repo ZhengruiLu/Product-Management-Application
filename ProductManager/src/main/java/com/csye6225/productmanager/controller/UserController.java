@@ -49,12 +49,13 @@ public class UserController {
             return new ResponseEntity<User>(HttpStatus.FORBIDDEN);
         }
 
-        return new ResponseEntity<User>(user, HttpStatus.OK);
+        User retUser = new User(user.getFirstName(), user.getLastName(), null, user.getUsername());
+
+        return new ResponseEntity<User>(retUser, HttpStatus.OK);
     }
 
     @PostMapping(value = "/v1/user", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createUser(
-//                                            @RequestBody User user
                                             @RequestParam(value = "first_name", required = true) String first_name,
                                            @RequestParam(value = "last_name", required = true) String last_name,
                                            @RequestParam(value = "password", required = true)String password,
@@ -77,10 +78,12 @@ public class UserController {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String encryptedPwd = passwordEncoder.encode(password);
         user.setPassword(encryptedPwd);
-//        if (user == null)
-//            return new ResponseEntity<>("No components can be null!", HttpStatus.BAD_REQUEST);
 
-        repo.save(user);
+        try {
+            repo.save(user);
+        } catch (Exception  e){
+            return new ResponseEntity<String>("User already exists! The error is: " + e.getMessage(), HttpStatus.CONFLICT);
+        }
 
         return new ResponseEntity<String>("User created successfully!", HttpStatus.CREATED);
     }
@@ -91,7 +94,7 @@ public class UserController {
             @RequestParam(value = "first_name")String firstName,
             @RequestParam(value = "last_name")String lastName,
             @RequestParam(value = "password")String password,
-            @RequestParam(value = "username")String username,
+//            @RequestParam(value = "username")String username,
             Authentication authentication
     ) {
         if (!isValid(userId)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -114,14 +117,14 @@ public class UserController {
 
         try {
             if (firstName == null || lastName == null
-                    || password == null || username == null)
+                    || password == null)
                 return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 
             //update user info
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setPassword(password);
-            user.setUsername(username);
+//            user.setUsername(username);
 
             repo.save(user);
 

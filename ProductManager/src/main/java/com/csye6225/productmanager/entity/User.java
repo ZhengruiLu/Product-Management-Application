@@ -25,7 +25,7 @@ public class User {
     private String lastName;
     @Column(nullable = false, length = 64)
     private String password;
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 45, unique = true)
     private String username;
 
     @Column(name = "account_created", updatable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")

@@ -1,5 +1,6 @@
 package com.csye6225.productmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.Fetch;
@@ -10,6 +11,9 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @JsonIgnoreProperties({"owner_user"})
 @Entity
@@ -51,6 +55,10 @@ public class Product {
     @ManyToOne
     @JoinColumn(name = "owner_user", nullable = false, updatable = false)
     private User user;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "image_product")
+    private List<Image> images;
 
     public Integer getOwnerUserId() {
         return ownerUserId;
@@ -134,4 +142,15 @@ public class Product {
         this.date_last_updated = date_last_updated;
     }
 
+    public void setOwnerUserId(Integer ownerUserId) {
+        this.ownerUserId = ownerUserId;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
 }

@@ -1,5 +1,6 @@
 package com.csye6225.productmanager.service;
 
+import com.csye6225.productmanager.entity.Image;
 import com.csye6225.productmanager.entity.Product;
 import com.csye6225.productmanager.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,5 +25,9 @@ public class ProductService {
 
     public void deleteById(Integer id) {
         repo.deleteById(id);
+    }
+
+    public List<Image> getImagesById(Integer id) {
+        return this.getById(id).getImages();
     }
 }

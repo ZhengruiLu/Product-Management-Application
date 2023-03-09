@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class HealthController {
 
-    private CustomHealthCheck customHealthCheck;
+    private final CustomHealthCheck customHealthCheck;
 
     @Autowired
     public HealthController(CustomHealthCheck customHealthCheck) {
@@ -23,9 +23,9 @@ public class HealthController {
     public ResponseEntity<String> healthCheck() {
         Health health = customHealthCheck.health();
         if (health.getStatus().equals(Status.UP)) {
-            return new ResponseEntity<>("OK", HttpStatus.OK);
+            return new ResponseEntity<>("Hello", HttpStatus.OK);
         } else {
-            return new ResponseEntity<>("ERROR", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("ERROR", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 

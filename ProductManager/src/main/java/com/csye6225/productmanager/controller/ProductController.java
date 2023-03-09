@@ -1,6 +1,7 @@
 package com.csye6225.productmanager.controller;
 
 import com.csye6225.productmanager.config.DuplicateSkuException;
+import com.csye6225.productmanager.entity.Image;
 import com.csye6225.productmanager.entity.Product;
 import com.csye6225.productmanager.entity.User;
 import com.csye6225.productmanager.repository.ProductRepository;
@@ -16,8 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
-
 
 @RestController
 public class ProductController {
@@ -27,20 +28,13 @@ public class ProductController {
     @Autowired
     private ProductRepository repo;
 
-
     @Autowired
     private UserService userService;
-
-
 
     @GetMapping(value = "/v1/product/{productId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Product> getProductById(
             @PathVariable(value = "productId")Integer id
     ) {
-//        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-//        User currUser = userDetails.getUser();
-//        Integer currUserId = currUser.getId();
-
         Optional<Product> optionalProduct = repo.findById(id);
         Product product;
 
@@ -50,10 +44,33 @@ public class ProductController {
             return new ResponseEntity<Product>(HttpStatus.FORBIDDEN);
         }
 
-//        if (currUserId.equals(product.getOwnerUserId()))
         return new ResponseEntity<Product>(product, HttpStatus.OK);
-//        else
-//            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+    }
+
+    @GetMapping(value = "/v1/product/{product_id}/image", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<List<Image>> getImagesById(
+            @PathVariable(value = "product_id")Integer product_id,
+            Authentication authentication
+    ) {
+        Optional<Product> optionalProduct = repo.findById(product_id);
+        Product product;
+
+        if (optionalProduct.isPresent()) {
+            product = optionalProduct.get();
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer currUserId = userDetails.getUser().getId();
+
+        if (!currUserId.equals(product.getOwnerUserId())){
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        List<Image> images = service.getImagesById(product_id);
+
+        return new ResponseEntity<>(images, HttpStatus.OK);
     }
 
     @DeleteMapping(value = "/v1/product/{productId}", produces = {MediaType.APPLICATION_JSON_VALUE})//, produces = "application/json"
@@ -100,9 +117,6 @@ public class ProductController {
         User currUser = userDetails.getUser();
 
         Product product = new Product();
-//        System.out.println("authentication.getName(): " + authentication.getName());
-//        System.out.println("userService.findByUserName(authentication.getName()): " + userService.findByUserName(authentication.getName()));
-//        System.out.println("User Details: " + authentication.getDetails());
 
         try {
             product.setName(name);
@@ -166,26 +180,18 @@ public class ProductController {
             )
                 return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
 
-
-            //update user info
-//            if (name != null)
                 product.setName(name);
 
-//            if (description != null)
                 product.setDescription(description);
 
-//            if (sku != null)
                 product.setSku(sku);
 
-//            if (manufacturer != null)
                 product.setManufacturer(manufacturer);
 
-//            if (quantity != null) {
                 if (quantity >= 0 && quantity <= 100)
                     product.setQuantity(quantity);
                 else
                     return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-//            }
 
             repo.save(product);
 
