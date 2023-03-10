@@ -4,7 +4,7 @@ After=syslog.target
 
 [Service]
 User=myapplication
-ExecStart=/usr/bin/java -jar /opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar
+ExecStart=/usr/bin/java -jar /opt/deployment/ProductManager-0.0.1-SNAPSHOT.jar -Dspring.config.additional-location=/opt/app/application.properties
 SuccessExitStatus=143
 Restart=always
 RestartSec=5
