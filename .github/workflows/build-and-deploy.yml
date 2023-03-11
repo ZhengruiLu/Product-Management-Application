@@ -18,6 +18,9 @@ jobs:
         with:
           version: latest
 
+      - name: touch jar
+        run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
+
       - name: Format Packer Template
         run: packer fmt scripts/java.pkr.hcl
 
