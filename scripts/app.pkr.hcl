@@ -97,12 +97,13 @@ build {
   #systemd setup
   provisioner "shell" {
     environment_vars = [
-      # "DEBIAN_FRONTEND=noninteractive",
+      "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1"
     ]
 
     inline = [
-      "sudo chown -R ec2-user:ec2-user /opt/app",
+      "sudo useradd myapplication",
+      "sudo chown -R myapplication:myapplication /opt/app",
       "sudo chmod -R 555 /opt/app",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
