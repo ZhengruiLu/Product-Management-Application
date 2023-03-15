@@ -75,14 +75,12 @@ build {
 #      "sudo yum install -y mariadb-server",
 #      "sudo systemctl start mariadb",
 #      "sudo systemctl enable mariadb",
-#      "echo $'\nY\nChangChang@1\nChangChang@1\nY\nY\nY\nY\n' | sudo mysql_secure_installation",
+#      "echo $'\nY\npassword\npassword\nY\nY\nY\nY\n' | sudo mysql_secure_installation",
 #      "sudo mysql -u root -pChangChang@1 -e 'CREATE DATABASE usertestdb;'",
       "sudo yum clean all",
       "sudo mkdir /opt/app",
       "sudo mkdir /var/log/apps",
-      "sudo chown -R $USER:$USER /opt/app",
-      "sudo chown -R $USER:$USER /var/log/apps",
-      "sudo chown -R $USER:$USER /etc/systemd/system",
+
     ]
   }
 
@@ -99,18 +97,15 @@ build {
   #systemd setup
   provisioner "shell" {
     environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
+      # "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1"
     ]
 
     inline = [
-      "sudo useradd myapplication",
-      "sudo chown myapplication:myapplication /opt/app/ProductManager-0.0.1-SNAPSHOT.jar",
-      "sudo chmod 500 /opt/app/ProductManager-0.0.1-SNAPSHOT.jar",
+      "sudo chown -R ec2-user:ec2-user /opt/app",
+      "sudo chmod -R 555 /opt/app",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
-#      "sudo systemctl start ProductManager.service",
-#      "sudo systemctl status ProductManager.service",
     ]
   }
 
