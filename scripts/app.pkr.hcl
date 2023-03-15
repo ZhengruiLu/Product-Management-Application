@@ -80,7 +80,9 @@ build {
       "sudo yum clean all",
       "sudo mkdir /opt/app",
       "sudo mkdir /var/log/apps",
-
+      "sudo chown -R $USER:$USER /opt/app",
+      "sudo chown -R $USER:$USER /var/log/apps",
+      "sudo chown -R $USER:$USER /etc/systemd/system",
     ]
   }
 
@@ -102,8 +104,7 @@ build {
     ]
 
     inline = [
-      "sudo useradd myapplication",
-      "sudo chown -R myapplication:myapplication /opt/app",
+      "sudo chown -R ec2-user:ec2-user /opt/app",
       "sudo chmod -R 555 /opt/app",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
