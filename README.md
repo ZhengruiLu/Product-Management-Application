@@ -17,6 +17,7 @@ then right click it again, choose "Maven" - "Reload Project".
 ### Part2 Bootstrapping Database
 Find the directory "resources", find the file application.yml. Find the database part,
 and fill in with your mysql username and password.
+...
 
 spring:
 datasource:
