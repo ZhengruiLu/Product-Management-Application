@@ -50,5 +50,5 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: us-west-1
-        run: packer build scripts/java.pkr.hcl
+        run: packer build scripts/app.pkr.hcl
 
