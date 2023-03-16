@@ -45,11 +45,13 @@ public class User {
 
     }
 
-    public User(String firstName, String lastName, String password, String username) {
+    public User(Integer id, String firstName, String lastName, String username, Timestamp account_created, Timestamp account_updated) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.password = password;
         this.username = username;
+        this.account_created = account_created;
+        this.account_updated = account_updated;
     }
 
     public void setId(Integer id) {

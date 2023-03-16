@@ -3,17 +3,13 @@ package com.csye6225.productmanager.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 @JsonIgnoreProperties({"owner_user"})
 @Entity
@@ -76,6 +72,20 @@ public class Product {
 
 
     public Product() {
+    }
+
+
+
+    public Product(Integer id, String name, String description, String sku, String manufacturer, Integer quantity, Timestamp date_added, Timestamp date_last_updated, Integer ownerUserId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.sku = sku;
+        this.manufacturer = manufacturer;
+        this.quantity = quantity;
+        this.date_added = date_added;
+        this.date_last_updated = date_last_updated;
+        this.ownerUserId = ownerUserId;
     }
 
     public Integer getId() {

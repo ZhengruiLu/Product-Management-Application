@@ -49,7 +49,14 @@ public class UserController {
             return new ResponseEntity<User>(HttpStatus.FORBIDDEN);
         }
 
-        User retUser = new User(user.getFirstName(), user.getLastName(), null, user.getUsername());
+        User retUser = new User(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getUsername(),
+                user.getAccount_updated(),
+                user.getAccount_updated()
+        );
 
         return new ResponseEntity<User>(retUser, HttpStatus.OK);
     }

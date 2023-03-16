@@ -44,7 +44,19 @@ public class ProductController {
             return new ResponseEntity<Product>(HttpStatus.FORBIDDEN);
         }
 
-        return new ResponseEntity<Product>(product, HttpStatus.OK);
+        Product retProduct = new Product(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getSku(),
+                product.getManufacturer(),
+                product.getQuantity(),
+                product.getDate_added(),
+                product.getDate_last_updated(),
+                product.getOwnerUserId()
+                );
+
+        return new ResponseEntity<Product>(retProduct, HttpStatus.OK);
     }
 
     @GetMapping(value = "/v1/product/{product_id}/image", produces = {MediaType.APPLICATION_JSON_VALUE})
@@ -63,8 +75,9 @@ public class ProductController {
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer currUserId = userDetails.getUser().getId();
+        String currUserPassword = userDetails.getUser().getPassword();
 
-        if (!currUserId.equals(product.getOwnerUserId())){
+        if (!currUserId.equals(product.getOwnerUserId()) || !currUserPassword.equals(product.getUser().getPassword())){
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
@@ -119,11 +132,12 @@ public class ProductController {
         Product product = new Product();
 
         try {
-            product.setName(name);
-            product.setDescription(description);
-            product.setSku(sku);
-            product.setManufacturer(manufacturer);
-            product.setUser(currUser);
+            Integer currUserId = userDetails.getUser().getId();
+            String currUserPassword = userDetails.getUser().getPassword();
+
+            if (!currUserId.equals(product.getOwnerUserId()) || !currUserPassword.equals(product.getUser().getPassword())){
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }
 
             if (quantity >= 0 && quantity <= 100)
                 product.setQuantity(quantity);
@@ -137,10 +151,27 @@ public class ProductController {
             )
                 return new ResponseEntity<Product>(HttpStatus.BAD_REQUEST);
 
+            product.setName(name);
+            product.setDescription(description);
+            product.setSku(sku);
+            product.setManufacturer(manufacturer);
+            product.setUser(currUser);
+
             service.save(product);
 
-            return new ResponseEntity<Product>(product, HttpStatus.CREATED);
+            Product retProduct = new Product(
+                    product.getId(),
+                    product.getName(),
+                    product.getDescription(),
+                    product.getSku(),
+                    product.getManufacturer(),
+                    product.getQuantity(),
+                    product.getDate_added(),
+                    product.getDate_last_updated(),
+                    product.getOwnerUserId()
+            );
 
+            return new ResponseEntity<Product>(retProduct, HttpStatus.CREATED);
         } catch (DataIntegrityViolationException ex) {
             throw new DuplicateSkuException("Product with SKU " + product.getSku() + " already exists");
         }
