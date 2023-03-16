@@ -1,5 +1,7 @@
 package com.csye6225.productmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -7,9 +9,9 @@ import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.List;
 
+@JsonIgnoreProperties({"owner_user"})
 @Entity
 @Table(name = "product")
 public class Product {
@@ -36,20 +38,54 @@ public class Product {
     @Column(name = "date_added", updatable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @CreationTimestamp
     private Timestamp date_added;
-    @Column(name = "date_last_updated", updatable = true, columnDefinition="timestamp default current_timestamp on update current_timestamp")
+
+    // @Column(name = "date_last_updated", nullable = true, updatable = true, columnDefinition="on update current_timestamp")
     @UpdateTimestamp
+    @Column(name = "date_last_updated")
     private Timestamp date_last_updated;
 
     @Column(name = "owner_user_id")
-    private Integer owner_user_id;
+    private Integer ownerUserId;
 
-    @OneToMany(mappedBy = "product")
-    private List<Image> images = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "owner_user", nullable = false, updatable = false)
+    private User user;
+
+    @JsonIgnore
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "image_product")
+    private List<Image> images;
+
+    public Integer getOwnerUserId() {
+        return ownerUserId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+        this.ownerUserId = user.getId();
+    }
+
 
 
     public Product() {
     }
-    public Product(Integer productId) {
+
+
+
+    public Product(Integer id, String name, String description, String sku, String manufacturer, Integer quantity, Timestamp date_added, Timestamp date_last_updated, Integer ownerUserId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.sku = sku;
+        this.manufacturer = manufacturer;
+        this.quantity = quantity;
+        this.date_added = date_added;
+        this.date_last_updated = date_last_updated;
+        this.ownerUserId = ownerUserId;
     }
 
     public Integer getId() {
@@ -116,12 +152,8 @@ public class Product {
         this.date_last_updated = date_last_updated;
     }
 
-    public Integer getOwner_user_id() {
-        return owner_user_id;
-    }
-
-    public void setOwner_user_id(Integer owner_user_id) {
-        this.owner_user_id = owner_user_id;
+    public void setOwnerUserId(Integer ownerUserId) {
+        this.ownerUserId = ownerUserId;
     }
 
     public List<Image> getImages() {

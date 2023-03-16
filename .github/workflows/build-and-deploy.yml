@@ -2,7 +2,9 @@ name: build-and-deploy
 
 on:
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
+      - modify-a05
 
 jobs:
   validate-packer-template:
@@ -16,14 +18,11 @@ jobs:
         with:
           version: latest
 
-#      - name: touch jar
-#        run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
-
-#      - name: touch service
-#        run: touch /tmp/ProductManager.service
+      - name: touch jar
+        run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
 
       - name: Format Packer Template
-        run: packer fmt scripts/java.pkr.hcl
+        run: packer fmt scripts/app.pkr.hcl
 
       - name: Validate Packer Template
-        run: packer validate scripts/java.pkr.hcl
+        run: packer validate scripts/app.pkr.hcl
