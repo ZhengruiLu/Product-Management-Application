@@ -80,7 +80,7 @@ build {
       "sudo yum clean all",
       "sudo mkdir /opt/app",
       "sudo mkdir /var/log/apps",
-#      "sudo chown -R ec2-user:ec2-user /opt/app",
+      "sudo chown -R ec2-user:ec2-user /opt/app",
 #      "sudo chown -R ec2-user:ec2-user /var/log/apps",
 #      "sudo chown -R $USER:$USER /etc/systemd/system",
     ]
