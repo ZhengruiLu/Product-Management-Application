@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - modify-a05
+      - modify-a06
 
 jobs:
   pack-java-jar:
