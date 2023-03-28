@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.csye6225</groupId>
-	<artifactId>ProductManager</artifactId>
+	<artifactId>webapp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>ProductManager</name>
 	<description>ProductManager</description>
@@ -94,7 +94,18 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<outputDirectory>${project.basedir}</outputDirectory>
+					<finalName>ProductManager</finalName>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
+
+
 
 </project>

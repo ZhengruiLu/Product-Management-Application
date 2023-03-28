@@ -15,14 +15,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Build with Maven
-        working-directory: ./ProductManager
-        run: mvn package
-
-      - name: Save JAR Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: ProductManager-0.0.1-SNAPSHOT.jar
-          path: ./ProductManager/target/ProductManager-0.0.1-SNAPSHOT.jar
+        working-directory: .
+        run: mvn -B package --file pom.xml
 
   build-ami:
     runs-on: ubuntu-latest

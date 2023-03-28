@@ -78,8 +78,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
-    destination = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
+    source      = "ProductManager.jar"
+    destination = "/tmp/ProductManager.jar"
   }
 
   provisioner "file" {
@@ -97,7 +97,7 @@ build {
     inline = [
       "sudo mkdir /opt/app",
       "sudo mkdir /var/log/apps",
-      "sudo mv /tmp/ProductManager-0.0.1-SNAPSHOT.jar /opt/app/",
+      "sudo mv /tmp/ProductManager.jar /opt/app/",
       "sudo mv /tmp/ProductManager.service /etc/systemd/system/",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
