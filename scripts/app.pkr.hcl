@@ -99,7 +99,6 @@ build {
       "sudo mkdir /var/log/apps",
       "sudo mv ./scripts/ProductManager-0.0.1-SNAPSHOT.jar /opt/app/",
       "sudo mv ./scripts/ProductManager.service /etc/systemd/system/",
-
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
     ]
