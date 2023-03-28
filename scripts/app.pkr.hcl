@@ -70,24 +70,22 @@ build {
     inline = [
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
-      "sudo yum clean all",
-      "sudo mkdir /opt/app",
-      "sudo mkdir /var/log/apps",
-      "sudo chown -R ec2-user:ec2-user /opt/app",
-      "sudo chown -R ec2-user:ec2-user /var/log/apps",
-      "sudo chown -R $USER:$USER /etc/systemd/system",
+      "sudo yum clean all"
+#      "sudo chown -R ec2-user:ec2-user /opt/app",
+#      "sudo chown -R ec2-user:ec2-user /var/log/apps",
+#      "sudo chown -R $USER:$USER /etc/systemd/system",
     ]
   }
 
-  provisioner "file" {
-    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
-    destination = "/opt/app/ProductManager-0.0.1-SNAPSHOT.jar"
-  }
-
-  provisioner "file" {
-    source      = "./scripts/ProductManager.service"
-    destination = "/etc/systemd/system/ProductManager.service"
-  }
+#  provisioner "file" {
+#    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
+#    destination = "/opt/app/ProductManager-0.0.1-SNAPSHOT.jar"
+#  }
+#
+#  provisioner "file" {
+#    source      = "./scripts/ProductManager.service"
+#    destination = "/etc/systemd/system/ProductManager.service"
+#  }
 
   #systemd setup
   provisioner "shell" {
@@ -97,6 +95,11 @@ build {
     ]
 
     inline = [
+      "sudo mkdir /opt/app",
+      "sudo mkdir /var/log/apps",
+      "sudo mv /tmp/ProductManager-0.0.1-SNAPSHOT.jar /opt/app/",
+      "sudo mv /tmp/ProductManager.service /etc/systemd/system/",
+
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
     ]
