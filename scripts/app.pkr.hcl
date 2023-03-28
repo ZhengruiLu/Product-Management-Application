@@ -77,15 +77,15 @@ build {
     ]
   }
 
-#  provisioner "file" {
-#    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
-#    destination = "/opt/app/ProductManager-0.0.1-SNAPSHOT.jar"
-#  }
-#
-#  provisioner "file" {
-#    source      = "./scripts/ProductManager.service"
-#    destination = "/etc/systemd/system/ProductManager.service"
-#  }
+  provisioner "file" {
+    source      = "./ProductManager/target/ProductManager-0.0.1-SNAPSHOT.jar"
+    destination = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
+  }
+
+  provisioner "file" {
+    source      = "./scripts/ProductManager.service"
+    destination = "/tmp/ProductManager.service"
+  }
 
   #systemd setup
   provisioner "shell" {
@@ -97,8 +97,8 @@ build {
     inline = [
       "sudo mkdir /opt/app",
       "sudo mkdir /var/log/apps",
-      "sudo mv ./scripts/ProductManager-0.0.1-SNAPSHOT.jar /opt/app/",
-      "sudo mv ./scripts/ProductManager.service /etc/systemd/system/",
+      "sudo mv /tmp/ProductManager-0.0.1-SNAPSHOT.jar /opt/app/",
+      "sudo mv /tmp/ProductManager.service /etc/systemd/system/",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
     ]
