@@ -21,6 +21,9 @@ jobs:
       - name: touch jar
         run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
 
+      - name: touch jar2
+        run: touch ./ProductManager/target/ProductManager-0.0.1-SNAPSHOT.jar
+
       - name: touch service
         run: touch /tmp/ProductManager.service
 
