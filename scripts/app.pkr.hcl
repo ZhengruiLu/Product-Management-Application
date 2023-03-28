@@ -97,8 +97,8 @@ build {
     inline = [
       "sudo mkdir /opt/app",
       "sudo mkdir /var/log/apps",
-      "sudo mv /tmp/ProductManager-0.0.1-SNAPSHOT.jar /opt/app/",
-      "sudo mv /tmp/ProductManager.service /etc/systemd/system/",
+      "sudo mv ./scripts/ProductManager-0.0.1-SNAPSHOT.jar /opt/app/",
+      "sudo mv ./scripts/ProductManager.service /etc/systemd/system/",
 
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
