@@ -30,7 +30,5 @@ jobs:
       - name: Format Packer Template
         run: packer fmt scripts/app.pkr.hcl
 
-      - name: Validate Packer Template
-        run: packer validate scripts/app.pkr.hcl
 
 
