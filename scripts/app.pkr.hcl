@@ -78,7 +78,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "ProductManager.jar"
+    source      = "./ProductManager.jar"
     destination = "/tmp/ProductManager.jar"
   }
 
