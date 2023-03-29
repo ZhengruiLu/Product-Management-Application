@@ -21,6 +21,9 @@ jobs:
       - name: touch jar
         run: touch /tmp/ProductManager.jar
 
+      - name: touch jar2
+        run: touch ProductManager.jar
+
       - name: touch service
         run: touch /tmp/ProductManager.service
 
