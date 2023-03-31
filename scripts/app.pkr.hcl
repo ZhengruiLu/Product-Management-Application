@@ -70,39 +70,37 @@ build {
     inline = [
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
-      "curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm",
-      "sudo rpm -U ./amazon-cloudwatch-agent.rpm",
-      "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c ssm:/CloudWatchAgentConfig.json -s",
+      "sudo yum install amazon-cloudwatch-agent",
       "sudo yum clean all"
     ]
   }
 
-  provisioner "file" {
-    source      = "./ProductManager.jar"
-    destination = "/tmp/ProductManager.jar"
-  }
-
-  provisioner "file" {
-    source      = "./scripts/ProductManager.service"
-    destination = "/tmp/ProductManager.service"
-  }
-
-  #systemd setup
-  provisioner "shell" {
-    environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
-      "CHECKPOINT_DISABLE=1"
-    ]
-
-    inline = [
-      "sudo mkdir /opt/app",
-      "sudo mkdir /var/log/apps",
-      "sudo mv /tmp/ProductManager.jar /opt/app/",
-      "sudo mv /tmp/ProductManager.service /etc/systemd/system/",
-      "sudo systemctl daemon-reload",
-      "sudo systemctl enable ProductManager.service"
-    ]
-  }
+#  provisioner "file" {
+#    source      = "./ProductManager.jar"
+#    destination = "/tmp/ProductManager.jar"
+#  }
+#
+#  provisioner "file" {
+#    source      = "./scripts/ProductManager.service"
+#    destination = "/tmp/ProductManager.service"
+#  }
+#
+#  #systemd setup
+#  provisioner "shell" {
+#    environment_vars = [
+#      "DEBIAN_FRONTEND=noninteractive",
+#      "CHECKPOINT_DISABLE=1"
+#    ]
+#
+#    inline = [
+#      "sudo mkdir /opt/app",
+#      "sudo mkdir /var/log/apps",
+#      "sudo mv /tmp/ProductManager.jar /opt/app/",
+#      "sudo mv /tmp/ProductManager.service /etc/systemd/system/",
+#      "sudo systemctl daemon-reload",
+#      "sudo systemctl enable ProductManager.service"
+#    ]
+#  }
 
   post-processor "manifest" {
     output     = "manifest.json"

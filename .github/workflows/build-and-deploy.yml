@@ -18,15 +18,6 @@ jobs:
         with:
           version: latest
 
-      - name: touch jar
-        run: touch /tmp/ProductManager.jar
-
-      - name: touch jar2
-        run: touch ProductManager.jar
-
-      - name: touch service
-        run: touch /tmp/ProductManager.service
-
       - name: Format Packer Template
         run: packer fmt scripts/app.pkr.hcl
 
