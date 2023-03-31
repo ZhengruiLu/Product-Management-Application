@@ -71,8 +71,9 @@ build {
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
       "sudo yum clean all",
-      "wget https://s3.region.amazonaws.com/amazoncloudwatch-agent-region/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm",
-      "sudo rpm -U ./amazon-cloudwatch-agent.rpm"
+      "curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm",
+      "sudo rpm -U ./amazon-cloudwatch-agent.rpm",
+      "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/cloudwatch-config.json -s"
     ]
   }
 
