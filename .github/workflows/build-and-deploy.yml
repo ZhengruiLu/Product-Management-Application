@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - main
-      - modify-a06
+      - a07
 
 jobs:
   validate-packer-template:
