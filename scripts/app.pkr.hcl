@@ -70,8 +70,8 @@ build {
     inline = [
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
-      "sudo yum install amazon-cloudwatch-agent",
-      "sudo yum clean all"
+      "sudo yum clean all",
+      "sudo yum install amazon-cloudwatch-agent"
     ]
   }
 
