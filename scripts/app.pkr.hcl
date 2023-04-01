@@ -69,7 +69,7 @@ build {
 
   provisioner "file" {
     source      = "./scripts/cloudwatch-config.json"
-    destination = "/opt/cloudwatch-config.json"
+    destination = "/tmp/cloudwatch-config.json"
   }
 
   provisioner "shell" {
@@ -84,6 +84,7 @@ build {
       "sudo yum clean all",
       "curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm",
       "sudo rpm -U ./amazon-cloudwatch-agent.rpm",
+      "sudo mv /tmp/cloudwatch-config.json /opt/",
 #      "sudo touch /opt/cloudwatch-config.json",
 #      "sudo chown ec2-user:ec2-user /opt/cloudwatch-config.json",
 #      "sudo chmod 644 /opt/cloudwatch-config.json",
