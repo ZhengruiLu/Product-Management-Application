@@ -62,6 +62,17 @@ build {
   sources = ["source.amazon-ebs.my-ami"]
 
   provisioner "shell" {
+    inline = [
+      "sudo mkdir -p /opt"
+    ]
+  }
+
+  provisioner "file" {
+    source      = "./cloudwatch-config.json"
+    destination = "/opt/cloudwatch-config.json"
+  }
+
+  provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
       "CHECKPOINT_DISABLE=1"
@@ -73,9 +84,9 @@ build {
       "sudo yum clean all",
       "curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm",
       "sudo rpm -U ./amazon-cloudwatch-agent.rpm",
-      "sudo touch /opt/cloudwatch-config.json",
-      "sudo chown ec2-user:ec2-user /opt/cloudwatch-config.json",
-      "sudo chmod 644 /opt/cloudwatch-config.json",
+#      "sudo touch /opt/cloudwatch-config.json",
+#      "sudo chown ec2-user:ec2-user /opt/cloudwatch-config.json",
+#      "sudo chmod 644 /opt/cloudwatch-config.json",
       "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/cloudwatch-config.json -s"
     ]
   }
@@ -86,7 +97,7 @@ build {
 #  }
 #
 #  provisioner "file" {
-#    source      = "./scripts/ProductManager.service"
+#    source      = "./ProductManager.service"
 #    destination = "/tmp/ProductManager.service"
 #  }
 #
