@@ -9,10 +9,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @RestController
 public class HealthController {
-
     private final CustomHealthCheck customHealthCheck;
+    private final Logger logger = (Logger) LoggerFactory.getLogger(HealthController.class);
 
     @Autowired
     public HealthController(CustomHealthCheck customHealthCheck) {
@@ -21,12 +24,18 @@ public class HealthController {
 
     @GetMapping("/healthz")
     public ResponseEntity<String> healthCheck() {
-        Health health = customHealthCheck.health();
-        if (health.getStatus().equals(Status.UP)) {
+
+        try {
+            Health health = customHealthCheck.health();
+            if (!health.getStatus().equals(Status.UP)) {
+                logger.error("Error during health check");
+                return new ResponseEntity<>("ERROR", HttpStatus.SERVICE_UNAVAILABLE);
+            }
+            logger.info("Health check successful");
             return new ResponseEntity<>("Hello", HttpStatus.OK);
-        } else {
+        } catch (Exception e) {
+            logger.error("Error during health check: " + e);
             return new ResponseEntity<>("ERROR", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
-
 }

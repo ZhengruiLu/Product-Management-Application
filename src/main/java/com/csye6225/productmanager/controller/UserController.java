@@ -5,24 +5,24 @@ import com.csye6225.productmanager.entity.User;
 import com.csye6225.productmanager.repository.UserRepository;
 import com.csye6225.productmanager.service.CustomUserDetails;
 import com.csye6225.productmanager.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.Optional;
 
 @Controller
 public class UserController {
+    private final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     @Autowired
     private UserService userService;
     @Autowired
@@ -33,11 +33,14 @@ public class UserController {
             @PathVariable("userId") Integer userId,
             Authentication authentication
     ) {
+        logger.info("getUserById method called with userId {}", userId);
+
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User currUser = userDetails.getUser();
         Integer currUserId = currUser.getId();
 
         if (!currUserId.equals(userId)){
+            logger.warn("Unauthorized access attempted with userId {}", userId);
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
@@ -46,6 +49,7 @@ public class UserController {
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
+            logger.warn("User with userId {} not found", userId);
             return new ResponseEntity<User>(HttpStatus.FORBIDDEN);
         }
 
@@ -58,25 +62,28 @@ public class UserController {
                 user.getAccount_updated()
         );
 
-        return new ResponseEntity<User>(retUser, HttpStatus.OK);
+        logger.info("User with userId {} retrieved successfully", userId);
+        return new ResponseEntity<>(retUser, HttpStatus.OK);
     }
 
     @PostMapping(value = "/v1/user", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createUser(
-                                            @RequestParam(value = "first_name", required = true) String first_name,
-                                           @RequestParam(value = "last_name", required = true) String last_name,
-                                           @RequestParam(value = "password", required = true)String password,
-                                           @RequestParam(value = "username", required = true) String username
+                                            @RequestParam(value = "first_name") String first_name,
+                                           @RequestParam(value = "last_name") String last_name,
+                                           @RequestParam(value = "password")String password,
+                                           @RequestParam(value = "username") String username
     ){
 
         User user = new User();
 
-        if(first_name ==null||first_name ==""
-            ||last_name ==null||last_name ==""
-            ||username ==null||username ==""
-            ||password ==null||password ==""
-            )
+        if(first_name ==null||first_name.equals("")
+            ||last_name ==null||last_name.equals("")
+            ||username ==null||username.equals("")
+            ||password ==null||password.equals("")
+            ) {
+            logger.warn("Invalid input parameters while creating new user");
             return new ResponseEntity<>("No components can be null!", HttpStatus.BAD_REQUEST);
+        }
 
         user.setFirstName(first_name);
         user.setLastName(last_name);
@@ -87,8 +94,10 @@ public class UserController {
         user.setPassword(encryptedPwd);
 
         try {
+            logger.info("User created with id " + user.getId());
             repo.save(user);
         } catch (Exception  e){
+            logger.error("Error creating user: " + e.getMessage());
             return new ResponseEntity<String>("User already exists! The error is: " + e.getMessage(), HttpStatus.CONFLICT);
         }
 
@@ -101,9 +110,10 @@ public class UserController {
             @RequestParam(value = "first_name")String firstName,
             @RequestParam(value = "last_name")String lastName,
             @RequestParam(value = "password")String password,
-//            @RequestParam(value = "username")String username,
             Authentication authentication
     ) {
+        logger.info("Update user request received for userId: {}", userId);
+
         if (!isValid(userId)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         //find user by id
         Optional<User> optionalUser = repo.findById(userId);
@@ -111,6 +121,7 @@ public class UserController {
         if (optionalUser.isPresent()) {
             user = optionalUser.get();
         } else {
+            logger.warn("User not found for userId: {}", userId);
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
@@ -119,22 +130,26 @@ public class UserController {
         Integer currUserId = currUser.getId();
 
         if (!currUserId.equals(user.getId())){
+            logger.warn("User with userId: {} is not authorized to update this user", currUserId);
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
 
         try {
             if (firstName == null || lastName == null
                     || password == null)
+            {
+                logger.warn("Invalid input for updating user with userId: {}", userId);
                 return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            }
 
             //update user info
             user.setFirstName(firstName);
             user.setLastName(lastName);
             user.setPassword(password);
-//            user.setUsername(username);
 
             repo.save(user);
 
+            logger.info("User with userId: {} updated successfully", userId);
             return new ResponseEntity<String>("User updated successfully!", HttpStatus.NO_CONTENT);
         }
         catch (DataIntegrityViolationException ex) {
