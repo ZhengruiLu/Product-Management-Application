@@ -68,7 +68,7 @@ build {
   }
 
   provisioner "file" {
-    source      = "./cloudwatch-config.json"
+    source      = "./scripts/cloudwatch-config.json"
     destination = "/opt/cloudwatch-config.json"
   }
 
@@ -97,7 +97,7 @@ build {
 #  }
 #
 #  provisioner "file" {
-#    source      = "./ProductManager.service"
+#    source      = "./scripts/ProductManager.service"
 #    destination = "/tmp/ProductManager.service"
 #  }
 #
