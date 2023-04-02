@@ -85,39 +85,36 @@ build {
       "curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm",
       "sudo rpm -U ./amazon-cloudwatch-agent.rpm",
       "sudo mv /tmp/cloudwatch-config.json /opt/",
-#      "sudo touch /opt/cloudwatch-config.json",
-#      "sudo chown ec2-user:ec2-user /opt/cloudwatch-config.json",
-#      "sudo chmod 644 /opt/cloudwatch-config.json",
       "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/cloudwatch-config.json -s"
     ]
   }
 
-#  provisioner "file" {
-#    source      = "./ProductManager.jar"
-#    destination = "/tmp/ProductManager.jar"
-#  }
-#
-#  provisioner "file" {
-#    source      = "./scripts/ProductManager.service"
-#    destination = "/tmp/ProductManager.service"
-#  }
-#
-#  #systemd setup
-#  provisioner "shell" {
-#    environment_vars = [
-#      "DEBIAN_FRONTEND=noninteractive",
-#      "CHECKPOINT_DISABLE=1"
-#    ]
-#
-#    inline = [
-#      "sudo mkdir /opt/app",
-#      "sudo mkdir /var/log/apps",
-#      "sudo mv /tmp/ProductManager.jar /opt/app/",
-#      "sudo mv /tmp/ProductManager.service /etc/systemd/system/",
-#      "sudo systemctl daemon-reload",
-#      "sudo systemctl enable ProductManager.service"
-#    ]
-#  }
+  provisioner "file" {
+    source      = "./ProductManager.jar"
+    destination = "/tmp/ProductManager.jar"
+  }
+
+  provisioner "file" {
+    source      = "./scripts/ProductManager.service"
+    destination = "/tmp/ProductManager.service"
+  }
+
+  #systemd setup
+  provisioner "shell" {
+    environment_vars = [
+      "DEBIAN_FRONTEND=noninteractive",
+      "CHECKPOINT_DISABLE=1"
+    ]
+
+    inline = [
+      "sudo mkdir /opt/app",
+      "sudo mkdir /var/log/apps",
+      "sudo mv /tmp/ProductManager.jar /opt/app/",
+      "sudo mv /tmp/ProductManager.service /etc/systemd/system/",
+      "sudo systemctl daemon-reload",
+      "sudo systemctl enable ProductManager.service"
+    ]
+  }
 
   post-processor "manifest" {
     output     = "manifest.json"

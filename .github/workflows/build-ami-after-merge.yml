@@ -7,8 +7,20 @@ on:
       - a07
 
 jobs:
+  pack-java-jar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkoutcode
+        uses: actions/checkout@v2
+
+      - name: BuildwithMaven
+        working-directory: .
+        run: mvn -B package --file pom.xml
+
   build-ami:
     runs-on: ubuntu-latest
+    needs: pack-java-jar
     steps:
       - name: Checkout code
         uses: actions/checkout@v2

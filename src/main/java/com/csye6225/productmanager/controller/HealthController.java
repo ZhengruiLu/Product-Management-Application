@@ -1,6 +1,7 @@
 package com.csye6225.productmanager.controller;
 
 import com.csye6225.productmanager.service.CustomHealthCheck;
+import com.timgroup.statsd.StatsDClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
@@ -18,13 +19,15 @@ public class HealthController {
     private final Logger logger = (Logger) LoggerFactory.getLogger(HealthController.class);
 
     @Autowired
+    private StatsDClient statsDClient;
+    @Autowired
     public HealthController(CustomHealthCheck customHealthCheck) {
         this.customHealthCheck = customHealthCheck;
     }
 
     @GetMapping("/healthz")
     public ResponseEntity<String> healthCheck() {
-
+        statsDClient.incrementCounter("endpoint.homepage.http.get");
         try {
             Health health = customHealthCheck.health();
             if (!health.getStatus().equals(Status.UP)) {

@@ -8,6 +8,7 @@ import com.csye6225.productmanager.repository.ProductRepository;
 import com.csye6225.productmanager.service.CustomUserDetails;
 import com.csye6225.productmanager.service.ProductService;
 import com.csye6225.productmanager.service.UserService;
+import com.timgroup.statsd.StatsDClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,11 +35,14 @@ public class ProductController {
     private UserService userService;
 
     private static final Logger logger = LoggerFactory.getLogger(ProductController.class);
-
+    @Autowired
+    private StatsDClient statsDClient;
     @GetMapping(value = "/v1/product/{productId}", produces = {MediaType.APPLICATION_JSON_VALUE})
     public ResponseEntity<Product> getProductById(
             @PathVariable(value = "productId")Integer id
     ) {
+        statsDClient.incrementCounter("endpoint.homepage.http.get");
+
         try {
             Optional<Product> optionalProduct = repo.findById(id);
             Product product;
@@ -75,6 +79,8 @@ public class ProductController {
             @PathVariable(value = "product_id")Integer product_id,
             Authentication authentication
     ) {
+        statsDClient.incrementCounter("endpoint.homepage.http.get");
+
         Optional<Product> optionalProduct = repo.findById(product_id);
         Product product;
 
@@ -105,6 +111,8 @@ public class ProductController {
             @PathVariable(value = "productId")Integer id,
             Authentication authentication
     ) {
+        statsDClient.incrementCounter("endpoint.homepage.http.get");
+
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer currUserId = userDetails.getUser().getId();
 
@@ -144,6 +152,8 @@ public class ProductController {
             @RequestParam(value ="manufacturer", required = true)String manufacturer,
             @RequestParam(value ="quantity", required = true)Integer quantity
             ) {
+        statsDClient.incrementCounter("endpoint.homepage.http.get");
+
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User currUser = userDetails.getUser();
@@ -212,7 +222,11 @@ public class ProductController {
             @RequestParam(value = "manufacturer")String manufacturer,
             @RequestParam(value = "quantity")Integer quantity
     ) {
+
         logger.info("Updating product with ID: {}", id);
+
+        statsDClient.incrementCounter("endpoint.homepage.http.get");
+
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -280,6 +294,9 @@ public class ProductController {
             Authentication authentication
     ) {
         logger.info("Updating product with id {}", id);
+
+        statsDClient.incrementCounter("endpoint.homepage.http.get");
+
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User currUser = userDetails.getUser();

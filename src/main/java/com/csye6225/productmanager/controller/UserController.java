@@ -5,6 +5,7 @@ import com.csye6225.productmanager.entity.User;
 import com.csye6225.productmanager.repository.UserRepository;
 import com.csye6225.productmanager.service.CustomUserDetails;
 import com.csye6225.productmanager.service.UserService;
+import com.timgroup.statsd.StatsDClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,8 @@ import java.util.Optional;
 @Controller
 public class UserController {
     private final Logger logger = LoggerFactory.getLogger(UserController.class);
-
+    @Autowired
+    private StatsDClient statsDClient;
     @Autowired
     private UserService userService;
     @Autowired
@@ -34,6 +36,7 @@ public class UserController {
             Authentication authentication
     ) {
         logger.info("getUserById method called with userId {}", userId);
+        statsDClient.incrementCounter("endpoint.homepage.http.get");
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         User currUser = userDetails.getUser();
@@ -73,6 +76,7 @@ public class UserController {
                                            @RequestParam(value = "password")String password,
                                            @RequestParam(value = "username") String username
     ){
+        statsDClient.incrementCounter("endpoint.homepage.http.get");
 
         User user = new User();
 
@@ -113,6 +117,7 @@ public class UserController {
             Authentication authentication
     ) {
         logger.info("Update user request received for userId: {}", userId);
+        statsDClient.incrementCounter("endpoint.homepage.http.get");
 
         if (!isValid(userId)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         //find user by id
