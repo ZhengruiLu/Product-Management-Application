@@ -3,7 +3,6 @@ Description=A Spring Boot application
 After=syslog.target
 
 [Service]
-User=ec2-user
 ExecStart=/usr/bin/java -jar /opt/app/ProductManager-0.0.1-SNAPSHOT.jar
 SuccessExitStatus=0
 Restart=always
