@@ -88,10 +88,10 @@ build {
     ]
   }
 
-  provisioner "file" {
-    source      = "./ProductManager.jar"
-    destination = "/tmp/ProductManager.jar"
-  }
+#  provisioner "file" {
+#    source      = "./ProductManager.jar"
+#    destination = "/tmp/ProductManager.jar"
+#  }
 
   provisioner "file" {
     source      = "./scripts/ProductManager.service"

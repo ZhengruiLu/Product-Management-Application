@@ -18,6 +18,13 @@ jobs:
         working-directory: .
         run: mvn -B package --file pom.xml
 
+      - name: Save JAR Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ProductManager-0.0.1-SNAPSHOT.jar
+          path: ./ProductManager.jar
+
+
   build-ami:
     runs-on: ubuntu-latest
     needs: pack-java-jar
