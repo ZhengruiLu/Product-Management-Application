@@ -100,10 +100,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<configuration>
-					<outputDirectory>${project.basedir}</outputDirectory>
-					<finalName>ProductManager</finalName>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
