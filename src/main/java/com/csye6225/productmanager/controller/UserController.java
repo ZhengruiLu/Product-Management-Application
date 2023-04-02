@@ -76,7 +76,7 @@ public class UserController {
                                            @RequestParam(value = "password")String password,
                                            @RequestParam(value = "username") String username
     ){
-        statsDClient.incrementCounter("endpoint.homepage.http.get");
+        statsDClient.incrementCounter("endpoint.homepage.http.post");
 
         User user = new User();
 
@@ -117,7 +117,7 @@ public class UserController {
             Authentication authentication
     ) {
         logger.info("Update user request received for userId: {}", userId);
-        statsDClient.incrementCounter("endpoint.homepage.http.get");
+        statsDClient.incrementCounter("endpoint.homepage.http.put");
 
         if (!isValid(userId)) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         //find user by id

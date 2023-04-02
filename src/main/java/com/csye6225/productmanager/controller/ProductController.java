@@ -111,7 +111,7 @@ public class ProductController {
             @PathVariable(value = "productId")Integer id,
             Authentication authentication
     ) {
-        statsDClient.incrementCounter("endpoint.homepage.http.get");
+        statsDClient.incrementCounter("endpoint.homepage.http.delete");
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Integer currUserId = userDetails.getUser().getId();
@@ -152,7 +152,7 @@ public class ProductController {
             @RequestParam(value ="manufacturer", required = true)String manufacturer,
             @RequestParam(value ="quantity", required = true)Integer quantity
             ) {
-        statsDClient.incrementCounter("endpoint.homepage.http.get");
+        statsDClient.incrementCounter("endpoint.homepage.http.post");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
@@ -225,7 +225,7 @@ public class ProductController {
 
         logger.info("Updating product with ID: {}", id);
 
-        statsDClient.incrementCounter("endpoint.homepage.http.get");
+        statsDClient.incrementCounter("endpoint.homepage.http.put");
 
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -295,7 +295,7 @@ public class ProductController {
     ) {
         logger.info("Updating product with id {}", id);
 
-        statsDClient.incrementCounter("endpoint.homepage.http.get");
+        statsDClient.incrementCounter("endpoint.homepage.http.patch");
 
 
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
