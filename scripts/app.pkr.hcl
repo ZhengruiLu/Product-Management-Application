@@ -94,8 +94,8 @@ build {
   }
 
   provisioner "file" {
-    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
-    destination = "/opt/app/ProductManager-0.0.1-SNAPSHOT.jar"
+    source      = "/tmp/ProductManager.jar"
+    destination = "/opt/app/ProductManager.jar"
   }
 
   provisioner "file" {
