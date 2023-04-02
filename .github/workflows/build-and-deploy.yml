@@ -21,6 +21,9 @@ jobs:
       - name: touch jar
         run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
 
+      - name: touch file
+        run: touch /tmp/cloudwatch-config.json
+
       - name: Format Packer Template
         run: packer fmt scripts/app.pkr.hcl
 
