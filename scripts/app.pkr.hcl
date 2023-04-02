@@ -85,17 +85,22 @@ build {
       "curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm",
       "sudo rpm -U ./amazon-cloudwatch-agent.rpm",
       "sudo mv /tmp/cloudwatch-config.json /opt/",
+      "sudo mkdir /opt/app",
+      "sudo mkdir /var/log/apps",
+      "sudo chown -R ec2-user:ec2-user /opt/app",
+      "sudo chown -R ec2-user:ec2-user /var/log/apps",
+      "sudo chown -R $USER:$USER /etc/systemd/system",
     ]
   }
 
-#  provisioner "file" {
-#    source      = "./ProductManager.jar"
-#    destination = "/tmp/ProductManager.jar"
-#  }
+  provisioner "file" {
+    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
+    destination = "/opt/app/ProductManager-0.0.1-SNAPSHOT.jar"
+  }
 
   provisioner "file" {
     source      = "./scripts/ProductManager.service"
-    destination = "/tmp/ProductManager.service"
+    destination = "/etc/systemd/system/ProductManager.service"
   }
 
   #systemd setup
@@ -106,10 +111,6 @@ build {
     ]
 
     inline = [
-      "sudo mkdir /opt/app",
-      "sudo mkdir /var/log/apps",
-      "sudo mv /tmp/ProductManager.jar /opt/app/",
-      "sudo mv /tmp/ProductManager.service /etc/systemd/system/",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
     ]
