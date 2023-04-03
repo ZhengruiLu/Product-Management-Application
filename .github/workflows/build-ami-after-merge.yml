@@ -36,6 +36,15 @@ jobs:
         with:
           version: latest
 
+      - name: Download JAR Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ProductManager-0.0.1-SNAPSHOT.jar
+          path: /tmp
+
+      - name: Copy JAR Artifact to Packer Directory
+        run: cp /tmp/ProductManager-0.0.1-SNAPSHOT.jar scripts/
+
       - name: Build Image with Packer
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
