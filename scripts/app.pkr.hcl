@@ -114,8 +114,7 @@ build {
     ]
 
     inline = [
-#      "sudo chown -R ec2-user:ec2-user /opt/app",
-      "sudo chmod -R 555 /opt/app",
+      "sudo chmod -R 755 /opt/app",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
     ]
