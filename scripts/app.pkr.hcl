@@ -98,6 +98,8 @@ build {
     source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
     destination = "/opt/app/ProductManager-0.0.1-SNAPSHOT.jar"
   }
+#source: ./ProductManager/target/ProductManager-0.0.1-SNAPSHOT.jar
+#dest: /tmp/ProductManager-0.0.1-SNAPSHOT.jar
 
   provisioner "file" {
     source      = "./scripts/ProductManager.service"
