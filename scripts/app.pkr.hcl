@@ -111,6 +111,7 @@ build {
     ]
 
     inline = [
+      "sudo chmod -R 755 /opt/app",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
     ]

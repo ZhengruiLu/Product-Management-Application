@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - main
-      - a07
+      - debug-a05
 
 jobs:
   validate-packer-template:
@@ -17,10 +17,6 @@ jobs:
         uses: hashicorp/setup-packer@v2.0.0
         with:
           version: latest
-
-      - name: touch jar
-        run: touch /tmp/webapp-0.0.1-SNAPSHOT.jar
-
 
       - name: Format Packer Template
         run: packer fmt scripts/app.pkr.hcl
