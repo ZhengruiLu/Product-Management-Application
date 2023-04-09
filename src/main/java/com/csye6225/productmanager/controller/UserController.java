@@ -6,23 +6,19 @@ import com.csye6225.productmanager.repository.UserRepository;
 import com.csye6225.productmanager.service.CustomUserDetails;
 import com.csye6225.productmanager.service.UserService;
 import com.timgroup.statsd.StatsDClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.neo4j.Neo4jProperties;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.security.Principal;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Controller
 public class UserController {
@@ -75,20 +71,20 @@ public class UserController {
 
     @PostMapping(value = "/v1/user", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createUser(
-            @RequestParam(value = "first_name") String first_name,
-            @RequestParam(value = "last_name") String last_name,
-            @RequestParam(value = "password")String password,
-            @RequestParam(value = "username") String username
+                                            @RequestParam(value = "first_name") String first_name,
+                                           @RequestParam(value = "last_name") String last_name,
+                                           @RequestParam(value = "password")String password,
+                                           @RequestParam(value = "username") String username
     ){
         statsDClient.incrementCounter("endpoint.homepage.http.post");
 
         User user = new User();
 
         if(first_name ==null||first_name.equals("")
-                ||last_name ==null||last_name.equals("")
-                ||username ==null||username.equals("")
-                ||password ==null||password.equals("")
-        ) {
+            ||last_name ==null||last_name.equals("")
+            ||username ==null||username.equals("")
+            ||password ==null||password.equals("")
+            ) {
             logger.warn("Invalid input parameters while creating new user");
             return new ResponseEntity<>("No components can be null!", HttpStatus.BAD_REQUEST);
         }

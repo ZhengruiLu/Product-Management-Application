@@ -66,6 +66,7 @@ build {
       "sudo mkdir -p /opt"
     ]
   }
+
   provisioner "file" {
     source      = "./scripts/cloudwatch-config.json"
     destination = "/tmp/cloudwatch-config.json"
@@ -77,7 +78,6 @@ build {
       "CHECKPOINT_DISABLE=1"
     ]
 
-
     inline = [
       "sudo yum update -y",
       "yes | sudo yum install java-1.8.0-openjdk",
@@ -85,7 +85,6 @@ build {
       "curl -O https://s3.amazonaws.com/amazoncloudwatch-agent/amazon_linux/amd64/latest/amazon-cloudwatch-agent.rpm",
       "sudo rpm -U ./amazon-cloudwatch-agent.rpm",
       "sudo mv /tmp/cloudwatch-config.json /opt/",
-      "sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a fetch-config -m ec2 -c file:/opt/cloudwatch-config.json -s",
       "sudo mkdir /opt/app",
       "sudo mkdir /var/log/apps",
       "sudo chown -R ec2-user:ec2-user /opt/app",
@@ -95,11 +94,9 @@ build {
   }
 
   provisioner "file" {
-    source      = "/tmp/ProductManager-0.0.1-SNAPSHOT.jar"
-    destination = "/opt/app/ProductManager-0.0.1-SNAPSHOT.jar"
+    source      = "./target/webapp-0.0.1-SNAPSHOT.jar"
+    destination = "/opt/app/webapp-0.0.1-SNAPSHOT.jar"
   }
-#source: ./ProductManager/target/ProductManager-0.0.1-SNAPSHOT.jar
-#dest: /tmp/ProductManager-0.0.1-SNAPSHOT.jar
 
   provisioner "file" {
     source      = "./scripts/ProductManager.service"
@@ -114,7 +111,6 @@ build {
     ]
 
     inline = [
-      "sudo chmod -R 755 /opt/app",
       "sudo systemctl daemon-reload",
       "sudo systemctl enable ProductManager.service"
     ]

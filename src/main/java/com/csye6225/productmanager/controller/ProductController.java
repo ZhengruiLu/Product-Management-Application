@@ -9,6 +9,8 @@ import com.csye6225.productmanager.service.CustomUserDetails;
 import com.csye6225.productmanager.service.ProductService;
 import com.csye6225.productmanager.service.UserService;
 import com.timgroup.statsd.StatsDClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
@@ -20,9 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @RestController
 public class ProductController {
@@ -152,7 +151,7 @@ public class ProductController {
             @RequestParam(value ="sku", required = true)String sku,
             @RequestParam(value ="manufacturer", required = true)String manufacturer,
             @RequestParam(value ="quantity", required = true)Integer quantity
-    ) {
+            ) {
         statsDClient.incrementCounter("endpoint.homepage.http.post");
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -258,20 +257,20 @@ public class ProductController {
                 return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
             }
 
-            product.setName(name);
+                product.setName(name);
 
-            product.setDescription(description);
+                product.setDescription(description);
 
-            product.setSku(sku);
+                product.setSku(sku);
 
-            product.setManufacturer(manufacturer);
+                product.setManufacturer(manufacturer);
 
-            if (quantity >= 0 && quantity <= 100)
-                product.setQuantity(quantity);
-            else {
-                logger.warn("Product update failed due to invalid quantity input. Should be 0-100.");
-                return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
-            }
+                if (quantity >= 0 && quantity <= 100)
+                    product.setQuantity(quantity);
+                else {
+                    logger.warn("Product update failed due to invalid quantity input. Should be 0-100.");
+                    return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+                }
 
             repo.save(product);
 
