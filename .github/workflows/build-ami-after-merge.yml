@@ -5,6 +5,7 @@ on:
     branches:
       - main
       - modify-a05
+      - new-debug-a05
 
 jobs:
   pack-java-jar:
