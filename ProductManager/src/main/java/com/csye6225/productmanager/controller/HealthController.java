@@ -33,10 +33,14 @@ public class HealthController {
                 return new ResponseEntity<>("ERROR", HttpStatus.SERVICE_UNAVAILABLE);
             }
             logger.info("Health check successful");
-            return new ResponseEntity<>("Hello", HttpStatus.OK);
+            return new ResponseEntity<>("Pass Health Test!", HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Error during health check: " + e);
             return new ResponseEntity<>("ERROR", HttpStatus.SERVICE_UNAVAILABLE);
         }
+    }
+
+    public void setStatsDClient(StatsDClient newStatsDClient) {
+        this.statsDClient = newStatsDClient;
     }
 }
