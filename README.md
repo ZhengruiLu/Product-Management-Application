@@ -35,6 +35,9 @@ Authorization - Choose "Basic Auth"
 Username: admin
 Password: password
 
+### Part5 Command to Import SSL Certificate
+aws acm import-certificate --certificate fileb://demo_zltech_me.crt --certificate-chain fileb://demo.zltech.me.ca-bundle --private-key fileb://demo.zltech.me.key
+
 Please change params as you want.
 
 POST: http://localhost:8080/v1/product?name=book&description=test description&sku=XYZ12345&manufacturer=test manufacturer&quantity=1
