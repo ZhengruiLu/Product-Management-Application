@@ -4,7 +4,8 @@ on:
   push:
     branches:
       - main
-      - modify-a05
+      - a07-webapp
+      - a09
 
 jobs:
   pack-java-jar:
@@ -23,6 +24,23 @@ jobs:
         with:
           name: ProductManager-0.0.1-SNAPSHOT.jar
           path: ./ProductManager/target/ProductManager-0.0.1-SNAPSHOT.jar
+
+  validate-packer-template:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup HashiCorp Packer
+        uses: hashicorp/setup-packer@v2.0.0
+        with:
+          version: latest
+
+      - name: Format Packer Template
+        run: packer fmt scripts/app.pkr.hcl
+
+      - name: Validate Packer Template
+        run: packer validate scripts/app.pkr.hcl
 
   build-ami:
     runs-on: ubuntu-latest
@@ -52,3 +70,34 @@ jobs:
           AWS_DEFAULT_REGION: us-west-1
         run: packer build scripts/app.pkr.hcl
 
+  update-latest-ami-and-instance:
+    runs-on: ubuntu-latest
+    needs: build-ami
+    steps:
+      # Config AWS DEMO Credential
+      - name: Configure AWS DEMO Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.DEMO_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.DEMO_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-1
+
+      - name: Get Latest AMI ID
+        id: get-ami-id
+        run: |
+          LATEST_AMI_ID=$(aws ec2 describe-images --owners 856116334851 --filters '[{"Name":"name", "Values":["csye6225_*"]}, {"Name":"state","Values":["available"]}]' --query "reverse(sort_by(Images, &CreationDate))[0].ImageId")
+          echo "latest AMI ID: $LATEST_AMI_ID"
+          echo "LATEST_AMI_ID=$LATEST_AMI_ID" >> $GITHUB_ENV
+
+      - name: Get Launch Template ID
+        run: |
+          LAUNCH_TEMPLATE_ID=$(aws ec2 describe-launch-templates --filters '[{"Name":"launch-template-name","Values":["asg_launch_config"]}]' --query "LaunchTemplates[0].LaunchTemplateId")
+          echo "launch Template ID: $LAUNCH_TEMPLATE_ID"
+          echo "LAUNCH_TEMPLATE_ID=$LAUNCH_TEMPLATE_ID" >> $GITHUB_ENV
+
+      - name: Create a launch template version
+        run: |
+          aws ec2 create-launch-template-version --launch-template-name asg_launch_config --version-description LatestVersion --source-version '$Latest' --launch-template-data '{"ImageId":'$LATEST_AMI_ID'}'
+
+      - name: refresh instance
+        run: aws autoscaling start-instance-refresh --auto-scaling-group-name csye6225-asg-spring2023
