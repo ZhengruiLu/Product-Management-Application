@@ -8,25 +8,19 @@ on:
       - a09
 
 jobs:
-  validate-packer-template:
+  run-application-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup HashiCorp Packer
-        uses: hashicorp/setup-packer@v2.0.0
+      - name: Set up JDK 8
+        uses: actions/setup-java@v1
         with:
-          version: latest
+          java-version: 1.8
 
-      - name: touch jar
-        run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
+      - name: Build with Maven
+        run: mvn -B clean package --file pom.xml
 
-      - name: touch file
-        run: touch /tmp/cloudwatch-config.json
-
-      - name: Format Packer Template
-        run: packer fmt scripts/app.pkr.hcl
-
-      - name: Validate Packer Template
-        run: packer validate scripts/app.pkr.hcl
+      - name: Run unit tests
+        run: mvn -Dtest=com.csye6225.productmanager.controller.HealthControllerTest test
