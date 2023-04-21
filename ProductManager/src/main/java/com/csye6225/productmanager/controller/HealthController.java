@@ -23,7 +23,7 @@ public class HealthController {
         this.customHealthCheck = customHealthCheck;
     }
 
-    @GetMapping("/healthz")
+    @GetMapping("/healthz/123")
     public ResponseEntity<String> healthCheck() {
         statsDClient.incrementCounter("endpoint.homepage.http.get");
         try {
