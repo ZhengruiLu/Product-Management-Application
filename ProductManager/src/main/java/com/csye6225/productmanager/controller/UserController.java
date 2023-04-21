@@ -73,7 +73,7 @@ public class UserController {
         return new ResponseEntity<>(retUser, HttpStatus.OK);
     }
 
-    @PostMapping(value = "/v1/user", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/v2/user", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> createUser(
             @RequestParam(value = "first_name") String first_name,
             @RequestParam(value = "last_name") String last_name,
