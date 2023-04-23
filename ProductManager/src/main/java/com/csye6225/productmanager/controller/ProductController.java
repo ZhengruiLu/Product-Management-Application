@@ -1,13 +1,19 @@
 package com.csye6225.productmanager.controller;
 
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.csye6225.productmanager.config.DuplicateSkuException;
 import com.csye6225.productmanager.entity.Image;
 import com.csye6225.productmanager.entity.Product;
 import com.csye6225.productmanager.entity.User;
 import com.csye6225.productmanager.repository.ProductRepository;
 import com.csye6225.productmanager.service.CustomUserDetails;
+import com.csye6225.productmanager.service.ImageService;
 import com.csye6225.productmanager.service.ProductService;
 import com.csye6225.productmanager.service.UserService;
+import com.csye6225.productmanager.utils.AWSConfig;
+import com.csye6225.productmanager.utils.RandomStringGenerator;
 import com.timgroup.statsd.StatsDClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -18,14 +24,23 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 public class ProductController {
+    RandomStringGenerator random = new RandomStringGenerator();
+    private static final String BUCKET_NAME = System.getenv("S3_BUCKET_NAME");
+    AmazonS3 s3Client = AWSConfig.awss3Client();
+    @Autowired
+    private ImageService imageService;
     @Autowired
     private ProductService service;
 
@@ -107,6 +122,67 @@ public class ProductController {
         return new ResponseEntity<>(images, HttpStatus.OK);
     }
 
+    @PostMapping(value = "/v1/product/{product_id}/image", produces = {MediaType.APPLICATION_JSON_VALUE})
+    public ResponseEntity<Image> createImage(
+            @PathVariable(value = "product_id")Integer id,
+            Authentication authentication,
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+        logger.info("Image - post");
+        statsDClient.incrementCounter("endpoint.homepage.http.post");
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer currUserId = userDetails.getUser().getId();
+
+        //find user by id
+        if (id == null || id < 0) {
+            logger.warn("Invalid ID " + id + " provided for product deletion");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Product> optionalProduct = repo.findById(id);
+        Product product;
+
+        if (optionalProduct.isPresent()) {
+            product = optionalProduct.get();
+        } else {
+            logger.warn("Product with ID " + id + " not found");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (!currUserId.equals(product.getOwnerUserId())){
+            logger.warn("Unauthorized deletion of product with ID " + id);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        // upload the image to AWS
+        String fileName = random.generateRandomString() + "/" +file.getOriginalFilename();
+
+
+        PutObjectRequest request = new PutObjectRequest(BUCKET_NAME,  fileName, file.getInputStream(), null);
+
+        try {
+            s3Client.putObject(request);
+        } catch (AmazonServiceException e) {
+            e.printStackTrace();
+            return new ResponseEntity<Image>(HttpStatus.BAD_REQUEST);
+        }
+
+        // store the image(details) to rds
+        Image newImage = new Image();
+        // set the image file name
+        newImage.setFile_name(fileName);
+        // set the product id
+        newImage.setProduct_id(id);
+        // set the s3 bucket path
+        newImage.setS3_bucket_path(BUCKET_NAME + fileName);
+//        newImage.setS3_bucket_path(fileName);
+
+        imageService.save(newImage);
+
+        return new ResponseEntity<Image>(newImage, HttpStatus.CREATED);
+    }
+
     @DeleteMapping(value = "/v1/product/{productId}", produces = {MediaType.APPLICATION_JSON_VALUE})//, produces = "application/json"
     public ResponseEntity<String> deleteProductById(
             @PathVariable(value = "productId")Integer id,
@@ -166,10 +242,10 @@ public class ProductController {
             Integer currUserId = userDetails.getUser().getId();
             String currUserPassword = userDetails.getUser().getPassword();
 
-            if (!currUserId.equals(product.getOwnerUserId()) || !currUserPassword.equals(product.getUser().getPassword())){
-                logger.warn("User with ID {} attempted to create a product for another user.", currUserId);
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }
+//            if (!currUserId.equals(product.getOwnerUserId()) || !currUserPassword.equals(product.getUser().getPassword())){
+//                logger.warn("User with ID {} attempted to create a product for another user.", currUserId);
+//                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+//            }
 
             if (quantity >= 0 && quantity <= 100)
                 product.setQuantity(quantity);

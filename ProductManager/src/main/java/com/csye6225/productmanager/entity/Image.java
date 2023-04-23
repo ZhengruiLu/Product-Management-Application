@@ -14,53 +14,51 @@ Image{
 image_id	integer($int64)
 example: 1
 readOnly: true
-
 product_id	integer($int64)
 example: 1
 readOnly: true
-
 file_name	string
 readOnly: true
-
 date_created	string($datetime)
 example: 2016-08-29T09:12:33.001Z
 readOnly: true
-
 s3_bucket_path	string
 readOnly: true
 }
  */
-@JsonIgnoreProperties({"image_product"})
+//@JsonIgnoreProperties({"image_product"})
 @Entity
 @Table(name = "image")
 public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer image_id;
-    @ManyToOne()
-    @JoinColumn(name = "image_product")
-    private Product image_product;
 
-    @Column(name = "product_id", updatable = false)
-    private Integer productId;
+    @Column(name = "product_id")
+    private Integer product_id;
 
-    @Column(name = "file_name", updatable = false, length = 20)
+    @Column(name = "file_name", updatable = false)
     private String file_name;
 
     @Column(name = "date_created", updatable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     @CreationTimestamp
     private Timestamp date_added;
 
-    @Column(name = "s3_bucket_path", updatable = false, length = 20)
+    @Column(name = "s3_bucket_path")
     private String s3_bucket_path;
 
-//    public Product getProduct() {
-//        return product;
-//    }
-//
-//    public void setProduct(Product product) {
-//        this.product = product;
-//    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_product")
+    private Product image_product;
+
+    public Product getProduct() {
+        return image_product;
+    }
+
+    public void setProduct(Product product) {
+        this.image_product = product;
+        this.product_id = product.getId();
+    }
 
     public Integer getImage_id() {
         return image_id;
@@ -78,12 +76,12 @@ public class Image {
         this.image_product = image_product;
     }
 
-    public Integer getProductId() {
-        return productId;
+    public Integer getProduct_id() {
+        return product_id;
     }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
+    public void setProduct_id(Integer productId) {
+        this.product_id = productId;
     }
 
     public String getFile_name() {
