@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 public class User {
-
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "user")
     private List<Product> product;

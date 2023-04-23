@@ -44,16 +44,17 @@ public class Product {
     @Column(name = "date_last_updated")
     private Timestamp date_last_updated;
 
-    @Column(name = "owner_user_id")
-    private Integer ownerUserId;
-
-
     @ManyToOne
     @JoinColumn(name = "owner_user", nullable = false, updatable = false)
     private User user;
 
-    @JsonIgnore
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "image_product")
+    @Column(name = "owner_user_id")
+    private Integer ownerUserId;
+
+//    @JsonIgnore
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+    @OneToMany(mappedBy = "image_product", cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private List<Image> images;
 
     public Integer getOwnerUserId() {
