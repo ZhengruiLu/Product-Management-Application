@@ -3,7 +3,7 @@ Description=A Spring Boot application
 After=syslog.target
 
 [Service]
-
+EnvironmentFile = /etc/environment
 ExecStart=/usr/bin/java -Dspring.config.additional-location=/opt/app/application.properties -Dspring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MariaDB103Dialect -jar /opt/app/ProductManager-0.0.1-SNAPSHOT.jar
 SuccessExitStatus=0
 Restart=always
