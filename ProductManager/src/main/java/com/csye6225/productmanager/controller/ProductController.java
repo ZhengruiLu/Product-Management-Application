@@ -8,11 +8,7 @@ import com.csye6225.productmanager.entity.Image;
 import com.csye6225.productmanager.entity.Product;
 import com.csye6225.productmanager.entity.User;
 import com.csye6225.productmanager.repository.ProductRepository;
-import com.csye6225.productmanager.service.CustomUserDetails;
-import com.csye6225.productmanager.service.ImageService;
-import com.csye6225.productmanager.service.ProductService;
-import com.csye6225.productmanager.service.UserService;
-import com.csye6225.productmanager.utils.AWSConfig;
+import com.csye6225.productmanager.service.*;
 import com.csye6225.productmanager.utils.RandomStringGenerator;
 import com.timgroup.statsd.StatsDClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +33,13 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 public class ProductController {
     RandomStringGenerator random = new RandomStringGenerator();
-    private static final String BUCKET_NAME = System.getenv("S3_BUCKET_NAME");
-    AmazonS3 s3Client = AWSConfig.awss3Client();
+
+    private AmazonClient amazonClient;
+
+    @Autowired
+    ProductController(AmazonClient amazonClient) {
+        this.amazonClient = amazonClient;
+    }
     @Autowired
     private ImageService imageService;
     @Autowired
@@ -158,15 +159,16 @@ public class ProductController {
         // upload the image to AWS
         String fileName = random.generateRandomString() + "/" +file.getOriginalFilename();
 
+        String s3_bucket_path = this.amazonClient.uploadFile(file);
 
-        PutObjectRequest request = new PutObjectRequest(BUCKET_NAME,  fileName, file.getInputStream(), null);
-
-        try {
-            s3Client.putObject(request);
-        } catch (AmazonServiceException e) {
-            e.printStackTrace();
-            return new ResponseEntity<Image>(HttpStatus.BAD_REQUEST);
-        }
+//        PutObjectRequest request = new PutObjectRequest(BUCKET_NAME,  fileName, file.getInputStream(), null);
+//
+//        try {
+//            s3Client.putObject(request);
+//        } catch (AmazonServiceException e) {
+//            e.printStackTrace();
+//            return new ResponseEntity<Image>(HttpStatus.BAD_REQUEST);
+//        }
 
         // store the image(details) to rds
         Image newImage = new Image();
@@ -175,12 +177,64 @@ public class ProductController {
         // set the product id
         newImage.setProduct_id(id);
         // set the s3 bucket path
-        newImage.setS3_bucket_path(BUCKET_NAME + fileName);
+        newImage.setS3_bucket_path(s3_bucket_path);
 //        newImage.setS3_bucket_path(fileName);
 
         imageService.save(newImage);
 
         return new ResponseEntity<Image>(newImage, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping(value = "/v1/product/{product_id}/image/{image_id}", produces = {MediaType.APPLICATION_JSON_VALUE})//, produces = "application/json"
+    public ResponseEntity<String> deleteImage(
+            @PathVariable(value = "product_id")Integer id,
+            @PathVariable(value = "image_id")Integer imageId,
+            Authentication authentication,
+            @RequestParam("url") String fileUrl
+    ) {
+        logger.info("Image - delete");
+        statsDClient.incrementCounter("endpoint.homepage.http.delete");
+
+        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer currUserId = userDetails.getUser().getId();
+
+        //find user by id
+        if (id == null || id < 0) {
+            logger.warn("Invalid ID " + id + " provided for product deletion");
+            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+        }
+
+        Optional<Product> optionalProduct = repo.findById(id);
+        Product product;
+
+        if (optionalProduct.isPresent()) {
+            product = optionalProduct.get();
+        } else {
+            logger.warn("Product with ID " + id + " not found");
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+        }
+
+        if (!currUserId.equals(product.getOwnerUserId())){
+            logger.warn("Unauthorized deletion of product with ID " + id);
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+
+        // check if the image exist
+        Image returnedImage = service.getImagesByImageId(id, imageId);
+
+        if (returnedImage == null) {
+            logger.warn("Image with ID " + id + " not found");
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+        }
+
+        //delete image from S3 and rds
+        imageService.deleteById(imageId);
+
+        //delete from S3
+        String deleteFromS3Record = this.amazonClient.deleteFileFromS3Bucket(fileUrl);
+        logger.info("Image with ID " + imageId + " deleted successfully");
+
+        return new ResponseEntity<String>("Image delete successfully!", HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping(value = "/v1/product/{productId}", produces = {MediaType.APPLICATION_JSON_VALUE})//, produces = "application/json"

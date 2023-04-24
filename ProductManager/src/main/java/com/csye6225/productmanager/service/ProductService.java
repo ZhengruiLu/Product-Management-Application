@@ -31,4 +31,8 @@ public class ProductService {
     public List<Image> getImagesById(Integer id) {
         return this.getById(id).getImages();
     }
+
+    public Image getImagesByImageId(Integer id, Integer imageId) {
+        return getImagesById(id).get(imageId);
+    }
 }
