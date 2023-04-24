@@ -2,6 +2,7 @@ package com.csye6225.productmanager.controller;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.csye6225.productmanager.config.DuplicateSkuException;
 import com.csye6225.productmanager.entity.Image;
@@ -22,6 +23,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
@@ -133,7 +136,7 @@ public class ProductController {
     public ResponseEntity<Image> createImage(
             @PathVariable(value = "product_id")Integer id,
             Authentication authentication,
-            @RequestParam("file") MultipartFile file
+            @RequestParam("file") File file
     ) throws IOException {
         logger.info("Image - post");
         statsDClient.incrementCounter("endpoint.homepage.http.post");
@@ -163,13 +166,20 @@ public class ProductController {
         }
 
         // upload the image to AWS
-        String fileName = random.generateRandomString() + "/" +file.getOriginalFilename();
+        String fileName = random.generateRandomString();
 
 //        String s3_bucket_path = this.amazonClient.uploadFile(file);
 
-        PutObjectRequest request = new PutObjectRequest(bucketName, fileName, file.getInputStream(), null);
+
+        FileInputStream inputStream = null;
+
+        // Compliant: specifies the content length of the stream.
 
         try {
+            inputStream = new FileInputStream(file);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(file.length());
+            PutObjectRequest request = new PutObjectRequest(bucketName, fileName, inputStream, metadata);
             s3Client.putObject(request);
         } catch (AmazonServiceException e) {
             e.printStackTrace();
