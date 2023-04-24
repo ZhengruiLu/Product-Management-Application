@@ -166,14 +166,9 @@ public class ProductController {
         }
 
         // upload the image to AWS
-        String fileName = random.generateRandomString();
-
 //        String s3_bucket_path = this.amazonClient.uploadFile(file);
-
-
-        FileInputStream inputStream = null;
-        PutObjectRequest request = new PutObjectRequest(bucketName, fileName, file.getInputStream(), null);
-
+        String fileName = random.generateRandomString() + "/" +file.getOriginalFilename();
+        PutObjectRequest request = new PutObjectRequest(bucketName,  fileName, file.getInputStream(), null);
         try {
             s3Client.putObject(request);
         } catch (AmazonServiceException e) {
