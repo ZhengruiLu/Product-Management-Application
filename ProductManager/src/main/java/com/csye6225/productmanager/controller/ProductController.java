@@ -136,7 +136,7 @@ public class ProductController {
     public ResponseEntity<Image> createImage(
             @PathVariable(value = "product_id")Integer id,
             Authentication authentication,
-            @RequestParam("file") File file
+            @RequestParam("file") MultipartFile file
     ) throws IOException {
         logger.info("Image - post");
         statsDClient.incrementCounter("endpoint.homepage.http.post");
@@ -172,14 +172,9 @@ public class ProductController {
 
 
         FileInputStream inputStream = null;
-
-        // Compliant: specifies the content length of the stream.
+        PutObjectRequest request = new PutObjectRequest(bucketName, fileName, file.getInputStream(), null);
 
         try {
-            inputStream = new FileInputStream(file);
-            ObjectMetadata metadata = new ObjectMetadata();
-            metadata.setContentLength(file.length());
-            PutObjectRequest request = new PutObjectRequest(bucketName, fileName, inputStream, metadata);
             s3Client.putObject(request);
         } catch (AmazonServiceException e) {
             e.printStackTrace();
