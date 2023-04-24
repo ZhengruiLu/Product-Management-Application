@@ -44,7 +44,7 @@ public class Image {
     @CreationTimestamp
     private Timestamp date_added;
 
-    @Column(name = "s3_bucket_path")
+    @Column(name = "s3_bucket_path",columnDefinition = "TEXT")
     private String s3_bucket_path;
 
     @ManyToOne(fetch = FetchType.LAZY)
