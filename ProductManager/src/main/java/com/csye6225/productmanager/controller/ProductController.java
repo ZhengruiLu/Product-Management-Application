@@ -9,9 +9,11 @@ import com.csye6225.productmanager.entity.Product;
 import com.csye6225.productmanager.entity.User;
 import com.csye6225.productmanager.repository.ProductRepository;
 import com.csye6225.productmanager.service.*;
+import com.csye6225.productmanager.utils.AWSConfig;
 import com.csye6225.productmanager.utils.RandomStringGenerator;
 import com.timgroup.statsd.StatsDClient;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -34,12 +36,16 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductController {
     RandomStringGenerator random = new RandomStringGenerator();
 
-    private AmazonClient amazonClient;
+//    private AmazonClient amazonClient;
+//    @Autowired
+//    ProductController(AmazonClient amazonClient) {
+//        this.amazonClient = amazonClient;
+//    }
 
-    @Autowired
-    ProductController(AmazonClient amazonClient) {
-        this.amazonClient = amazonClient;
-    }
+    AmazonS3 s3Client = AWSConfig.awss3Client();
+
+    @Value("${amazonProperties.bucketName}")
+    private String bucketName;
     @Autowired
     private ImageService imageService;
     @Autowired
@@ -159,16 +165,16 @@ public class ProductController {
         // upload the image to AWS
         String fileName = random.generateRandomString() + "/" +file.getOriginalFilename();
 
-        String s3_bucket_path = this.amazonClient.uploadFile(file);
+//        String s3_bucket_path = this.amazonClient.uploadFile(file);
 
-//        PutObjectRequest request = new PutObjectRequest(BUCKET_NAME,  fileName, file.getInputStream(), null);
-//
-//        try {
-//            s3Client.putObject(request);
-//        } catch (AmazonServiceException e) {
-//            e.printStackTrace();
-//            return new ResponseEntity<Image>(HttpStatus.BAD_REQUEST);
-//        }
+        PutObjectRequest request = new PutObjectRequest(bucketName, fileName, file.getInputStream(), null);
+
+        try {
+            s3Client.putObject(request);
+        } catch (AmazonServiceException e) {
+            e.printStackTrace();
+            return new ResponseEntity<Image>(HttpStatus.BAD_REQUEST);
+        }
 
         // store the image(details) to rds
         Image newImage = new Image();
@@ -177,8 +183,8 @@ public class ProductController {
         // set the product id
         newImage.setProduct_id(id);
         // set the s3 bucket path
-        newImage.setS3_bucket_path(s3_bucket_path);
-//        newImage.setS3_bucket_path(fileName);
+//        newImage.setS3_bucket_path(s3_bucket_path);
+        newImage.setS3_bucket_path(fileName);
 
         imageService.save(newImage);
 
@@ -231,7 +237,7 @@ public class ProductController {
         imageService.deleteById(imageId);
 
         //delete from S3
-        String deleteFromS3Record = this.amazonClient.deleteFileFromS3Bucket(fileUrl);
+//        String deleteFromS3Record = this.amazonClient.deleteFileFromS3Bucket(fileUrl);
         logger.info("Image with ID " + imageId + " deleted successfully");
 
         return new ResponseEntity<String>("Image delete successfully!", HttpStatus.NO_CONTENT);
