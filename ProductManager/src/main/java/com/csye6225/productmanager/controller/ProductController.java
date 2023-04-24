@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -168,7 +169,10 @@ public class ProductController {
         // upload the image to AWS
 //        String s3_bucket_path = this.amazonClient.uploadFile(file);
         String fileName = random.generateRandomString() + "/" +file.getOriginalFilename();
-        PutObjectRequest request = new PutObjectRequest(bucketName,  fileName, file.getInputStream(), null);
+        InputStream stream = new FileInputStream((File) file);
+        ObjectMetadata metadata = new ObjectMetadata();
+        metadata.setContentLength(((File) file).length());
+        PutObjectRequest request = new PutObjectRequest(bucketName,  fileName, stream, metadata);
         try {
             s3Client.putObject(request);
         } catch (AmazonServiceException e) {
