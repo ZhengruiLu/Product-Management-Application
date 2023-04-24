@@ -36,7 +36,10 @@ public class AmazonClient {
     private String bucketName;
 
     @Value("${amazonProperties.iamrolearn}")
-    private static String iamRoleArn;
+    private String iamRoleArn;
+
+    @Value("${amazonProperties.session}")
+    private String session;
 
     @PostConstruct
     private void initializeAmazon() {
@@ -46,9 +49,9 @@ public class AmazonClient {
                 .build();
         AssumeRoleRequest assumeRequest = new AssumeRoleRequest()
                 .withRoleArn(iamRoleArn)
-                .withRoleSessionName("MySession");
+                .withRoleSessionName(session);
         STSAssumeRoleSessionCredentialsProvider credentialsProvider =
-                new STSAssumeRoleSessionCredentialsProvider.Builder(iamRoleArn, "MySession")
+                new STSAssumeRoleSessionCredentialsProvider.Builder(iamRoleArn, session)
                         .withStsClient(stsClient)
                         .build();
         this.s3client = AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider)
