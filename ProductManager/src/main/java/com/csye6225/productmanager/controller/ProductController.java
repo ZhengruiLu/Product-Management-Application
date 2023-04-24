@@ -23,10 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
@@ -168,11 +165,12 @@ public class ProductController {
 
         // upload the image to AWS
 //        String s3_bucket_path = this.amazonClient.uploadFile(file);
-        String fileName = random.generateRandomString() + "/" +file.getOriginalFilename();
-        InputStream stream = new FileInputStream((File) file);
+        // upload the image to AWS
+        String fileName = random.generateRandomString() + "/" + file.getOriginalFilename();
+        InputStream stream = new ByteArrayInputStream(file.getBytes());
         ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(((File) file).length());
-        PutObjectRequest request = new PutObjectRequest(bucketName,  fileName, stream, metadata);
+        metadata.setContentLength(file.getSize());
+        PutObjectRequest request = new PutObjectRequest(bucketName, fileName, stream, metadata);
         try {
             s3Client.putObject(request);
         } catch (AmazonServiceException e) {
