@@ -37,11 +37,11 @@ import org.springframework.web.multipart.MultipartFile;
 public class ProductController {
     RandomStringGenerator random = new RandomStringGenerator();
 
-//    private AmazonClient amazonClient;
-//    @Autowired
-//    ProductController(AmazonClient amazonClient) {
-//        this.amazonClient = amazonClient;
-//    }
+    private AmazonClient amazonClient;
+    @Autowired
+    ProductController(AmazonClient amazonClient) {
+        this.amazonClient = amazonClient;
+    }
 
     AmazonS3 s3Client = AWSConfig.awss3Client();
 
@@ -164,19 +164,20 @@ public class ProductController {
         }
 
         // upload the image to AWS
-//        String s3_bucket_path = this.amazonClient.uploadFile(file);
+        String s3_bucket_path = this.amazonClient.uploadFile(file);
         // upload the image to AWS
         String fileName = random.generateRandomString() + "/" + file.getOriginalFilename();
-        InputStream stream = new ByteArrayInputStream(file.getBytes());
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentLength(file.getSize());
-        PutObjectRequest request = new PutObjectRequest(bucketName, fileName, stream, metadata);
-        try {
-            s3Client.putObject(request);
-        } catch (AmazonServiceException e) {
-            e.printStackTrace();
-            return new ResponseEntity<Image>(HttpStatus.BAD_REQUEST);
-        }
+//        InputStream stream = new ByteArrayInputStream(file.getBytes());
+//        ObjectMetadata metadata = new ObjectMetadata();
+//        metadata.setContentLength(file.getSize());
+//        PutObjectRequest request = new PutObjectRequest(bucketName, fileName, stream, metadata);
+//        try {
+//            s3Client.putObject(request);
+//        } catch (AmazonServiceException e) {
+//            logger.info("AmazonServiceException: ErrorCode-" + e.getErrorCode() + "ErrorMessage"+ e.getErrorMessage());
+//            e.printStackTrace();
+//            return new ResponseEntity<Image>(HttpStatus.BAD_REQUEST);
+//        }
 
         // store the image(details) to rds
         Image newImage = new Image();
