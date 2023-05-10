@@ -1,4 +1,4 @@
-# Project - *Product Management Application* - project of Network Structures and Cloud Computing
+# Project - *Product Management Application* - Network Structures and Cloud Computing
 
 **Product Management Application** is a Web Application using Sprint Boot that meets Cloud-Native Web Application Requirements. It implemented RESTful APIs that return with proper HTTP status codes based on user stories. 
 
@@ -11,46 +11,60 @@ Time spent: **80** hours spent in total
 The following **required** functionality is completed:
 
 ### API Requirements
-* [X] RESTful API Endpoints To Be Implemented: https://app.swaggerhub.com/apis-docs/csye6225-webapp/cloud-native-webapp/spring2023-a5
-* [X] All API request/response payloads should be in JSON.
-* [X] As a user, I expect all API calls to return with a proper HTTP status code.
-* [X] Users should be authenticated & authorized where applicable.
+* [X] **RESTful API** Endpoints To Be Implemented: https://app.swaggerhub.com/apis-docs/csye6225-webapp/cloud-native-webapp/spring2023-a5
+* [X] All API request/response payloads should be in **JSON**.
+* [X] As a user, I expect all API calls to return with a proper **HTTP status code**.
+* [X] Users should be **authenticated & authorized** where applicable.
 * [X] Users can upload images to the products they have created.
 
 ### Bootstrap Database Requirements
 * [X] The application is expected to automatically bootstrap the database at startup.
-* [X] Bootstrapping creates the schema, tables, indexes, sequences, etc., or updates them if their definition has changed.
+* [X] Bootstrapping creates the schema, tables, indexes, sequences, etc. Or updates them if their definition has changed.
 
-### S3 bucket Requirements
+### S3 bucket and RDS Requirements
 * [X] You must add support for popular file types such as jpeg, jpg, png, etc.
 * [X] Each image must be stored in an S3 bucket.
-* [X] Object metadata must be stored in the database.
-* [X] Users can (hard) delete images they have uploaded.
-* [X] The image must be deleted from the S3 bucket.
-* [X] Users cannot update their images. 
-* [X] Users can delete only their own images from the products they have created.
-* [X] Users should not be able to delete images uploaded by other users or from products created by other users.
-* [X] Multiple users can upload images with the same name. You must ensure the partitioning user's images in the object storage bucket.
-* [X] S3 credentials should not be hardcoded anywhere and the application must be able to access S3 using the IAM role attached to the EC2 instance.
+* [X] Object metadata must be stored in the database - **MariaDB/MySQL** or **RDS instance**.
+
+### Infrastructure as Code
+* [X] Deployed Application by launching the AMI using Amazon Linux 2 via **Packer**. 
+* [X] Setup autorun using **Systemd**.
+* [X] Used **Terraform** configuration file to create all AWS resources needed. See [Repository: aws-infra](https://github.com/ZhengruiLu/aws-infra)
+
+### CI/CD
+* [X] Pull Request Raised Workflow.
+	* [X] Add a GitHub Action workflow to run the application unit tests for each pull request raised.
+    * [X] A pull request can only be merged if the workflow executes successfully.
+* [X] Pull Request Merged Workflow.
+	* [X] Add another GitHub actions workflow and configure it to be triggered when a pull request is merged. This workflow should do the following:
+		- a. Run the unit test.
+		- b. Validate Packer Template
+		- c. Build Application Artifact(s)
+		- d. Build AMI
+			- i. Upgrade OS packages
+			- ii. Install dependencies (python, node.js, etc.)
+			- iii. Install application dependencies (pip install for Python)
+			- iv. Set up the application by copying the application artifacts and the configuration files.
+			- v. Configure the application to start automatically when VM is launched.
+		- e. Create a new Launch Template version with the latest AMI ID for the autoscaling group. The autoscaling group should be configured to use the latest version of the Launch Template.
+		- f. Issue command to the auto-scale group to do an instance refresh.
 
 
-
-## Video Walkthrough
-
-Here's a walkthrough of implemented user stories:
-
-<img src='walkthrough.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
-
-GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
 Describe any challenges encountered while building the app.
 
-* [X] Remember the process of project development
-* [X] Remember **git** process
-* [ ] Adding the **Editing** Feature
-* [ ] Improve the **UI / UX** of apps including icons, styling, color, **spacing** 
+### Wep Application Dev
+* [X] Learn how to use the Spring Boot Framework to build a project.
+* [X] How to add authenticated and authorized functionality.
+* [X] Differentiate between HTTP status codes, such as 401 and 403.
+* [ ] CI/CD for Web Application.
+
+### Cloud
+* [X] Understand the functions and application methods of AWS related services.
+* [X] How to upload images to S3 bucket and RDS.
+* [X] Obtain an SSL certificate and verify the certificate is stored in AWS Certificate Manager.
 
 ## License
 
