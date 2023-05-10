@@ -49,10 +49,7 @@ The following **required** functionality is completed:
 		- e. Create a new Launch Template version with the latest AMI ID for the autoscaling group. The autoscaling group should be configured to use the latest version of the Launch Template.
 		- f. Issue command to the auto-scale group to do an instance refresh.
 
-
-
 ## Notes
-
 Describe any challenges encountered while building the app.
 
 ### Wep Application Dev
@@ -65,6 +62,64 @@ Describe any challenges encountered while building the app.
 * [X] Understand the functions and application methods of AWS related services.
 * [X] How to upload images to S3 bucket and RDS.
 * [X] Obtain an SSL certificate and verify the certificate is stored in AWS Certificate Manager.
+
+## Build and Deploy instructions
+### a. Prerequisites for building and deploying your application locally.
+- Framework: SpringBoot
+- Database: MySQL/MariaDB
+- Infrastructure as Code: Terraform, Packer
+- Autorun: Systemd
+- Cloud: AWS
+- CI/CD: Github Action
+- IDE: Intellij
+- Test Endpoints: Postman
+
+### b. Build and Deploy instructions for the web application.
+#### Part1 Maven Project
+After clone the repository to local, open the directory ProductManager, 
+find pom.xml, right click it and choose "Add it as a Maven project", 
+then right click it again, choose "Maven" - "Reload Project".
+
+#### Part2 Bootstrapping Database
+Find the directory "resources", find the file application.yml. Find the database part,
+and fill in with your MySQL/MariaDB username and password.
+```
+spring:
+datasource:
+driver-class-name: com.mysql.cj.jdbc.Driver
+url: jdbc:mysql://127.0.0.1:3306/usertestdb
+username: add your username
+password: add your password
+```
+
+#### Part3 Start the application
+Find the file ProductManagerApplication in ProductManager - src - main - java - com.csye6225.productmanager,
+Click run.
+
+#### Part4 Test with Postman
+Authorization - Choose "Basic Auth"
+Username: admin
+Password: password
+
+#### Part5 Command to Import SSL Certificate
+aws acm import-certificate --certificate fileb://demo_zltech_me.crt --certificate-chain fileb://demo.zltech.me.ca-bundle --private-key fileb://demo.zltech.me.key
+
+Please change params according to your setting.
+##### Sample URL and its components
+- URL 	http://localhost:8080/v1/product?name=book&description=test
+- scheme	http
+- hostname localhost
+- port	8080
+- origin	http://localhost:8080
+- path	/v1/product
+- query	?name=book&description=test
+
+##### Sample URLs
+POST: http://localhost:8080/v1/product?name=book&description=test description&sku=XYZ12345&manufacturer=test manufacturer&quantity=1
+GET: http://localhost:8080/v1/product/1
+PUT: http://localhost:8080/v1/product/1?quantity=12
+PATCH: http://localhost:8080/v1/product/1?quantity=10
+DELETE: http://localhost:8080/v1/product/1
 
 ## License
 
@@ -81,51 +136,3 @@ Describe any challenges encountered while building the app.
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
-
-# webapp
-## a. Prerequisites for building and deploying your application locally.
-Tools: SpringBoot
-Database: MySQL
-IDE: Intellij
-Test: Postman
-Autorun: Systemd
-
-
-## b. Build and Deploy instructions for the web application.
-
-### Part1 Maven Project
-After clone the repository to local, open the directory ProductManager, 
-find pom.xml, right click it and choose "Add it as a Maven project", 
-then right click it again, choose "Maven" - "Reload Project".
-
-### Part2 Bootstrapping Database
-Find the directory "resources", find the file application.yml. Find the database part,
-and fill in with your mysql username and password.
-...
-
-spring:
-datasource:
-driver-class-name: com.mysql.cj.jdbc.Driver
-url: jdbc:mysql://127.0.0.1:3306/usertestdb
-username: add your username
-password: add your password
-
-### Part3 Start the application
-Find the file ProductManagerApplication in ProductManager - src - main - java - com.csye6225.productmanager,
-Click run.
-
-### Part4 Test with Postman
-Authorization - Choose "Basic Auth"
-Username: admin
-Password: password
-
-### Part5 Command to Import SSL Certificate
-aws acm import-certificate --certificate fileb://demo_zltech_me.crt --certificate-chain fileb://demo.zltech.me.ca-bundle --private-key fileb://demo.zltech.me.key
-
-Please change params as you want.
-
-POST: http://localhost:8080/v1/product?name=book&description=test description&sku=XYZ12345&manufacturer=test manufacturer&quantity=1
-GET: http://localhost:8080/v1/product/1
-PUT: http://localhost:8080/v1/product/1?quantity=12
-PATCH: http://localhost:8080/v1/product/1?quantity=10
-DELETE: http://localhost:8080/v1/product/1
