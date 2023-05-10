@@ -115,7 +115,7 @@ Please change params according to your setting.
 - query	        ?name=book&description=test
 
 ##### Sample URLs
-- POST: http://localhost:8080/v1/product?name=book&description=test description&sku=XYZ12345&manufacturer=test manufacturer&quantity=1
+- POST: http://localhost:8080/v1/product?name=book&description=description&sku=XYZ12345&manufacturer=manufacturer&quantity=1
 - GET: http://localhost:8080/v1/product/1
 - PUT: http://localhost:8080/v1/product/1?quantity=12
 - PATCH: http://localhost:8080/v1/product/1?quantity=10
