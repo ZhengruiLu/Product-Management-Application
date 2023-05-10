@@ -10,28 +10,28 @@ Time spent: **80** hours spent in total
 
 The following **required** functionality is completed:
 
-### API Requirements
+### API
 * [X] **RESTful API** Endpoints To Be Implemented: https://app.swaggerhub.com/apis-docs/csye6225-webapp/cloud-native-webapp/spring2023-a5
 * [X] All API request/response payloads should be in **JSON**.
 * [X] As a user, I expect all API calls to return with a proper **HTTP status code**.
 * [X] Users should be **authenticated & authorized** where applicable.
 * [X] Users can upload images to the products they have created.
 
-### Bootstrap Database Requirements
+### Bootstrap Database
 * [X] The application is expected to automatically bootstrap the database at startup.
 * [X] Bootstrapping creates the schema, tables, indexes, sequences, etc. Or updates them if their definition has changed.
 
-### S3 bucket and RDS Requirements
+### S3 bucket and RDS
 * [X] You must add support for popular file types such as jpeg, jpg, png, etc.
 * [X] Each image must be stored in an S3 bucket.
 * [X] Object metadata must be stored in the database - **MariaDB/MySQL** or **RDS instance**.
 
-### Infrastructure as Code
+### Infrastructure as Code with Terraform and Packer
 * [X] Deployed Application by launching the AMI using Amazon Linux 2 via **Packer**. 
 * [X] Setup autorun using **Systemd**.
 * [X] Used **Terraform** configuration file to create all AWS resources needed. See [Repository: aws-infra](https://github.com/ZhengruiLu/aws-infra)
 
-### CI/CD
+### CI/CD with Github Action
 * [X] Pull Request Raised Workflow.
 	* [X] Add a GitHub Action workflow to run the application unit tests for each pull request raised.
     * [X] A pull request can only be merged if the workflow executes successfully.
@@ -63,7 +63,7 @@ Describe any challenges encountered while building the app.
 * [X] How to upload images to S3 bucket and RDS.
 * [X] Obtain an SSL certificate and verify the certificate is stored in AWS Certificate Manager.
 
-## Build and Deploy instructions
+## Build and Deploy Instructions
 ### a. Prerequisites for building and deploying your application locally.
 - Framework: SpringBoot
 - Database: MySQL/MariaDB
@@ -108,11 +108,11 @@ Please change params according to your setting.
 ##### Sample URL and its components
 - URL 	http://localhost:8080/v1/product?name=book&description=test
 - scheme	http
-- hostname localhost
-- port	8080
-- origin	http://localhost:8080
-- path	/v1/product
-- query	?name=book&description=test
+- hostname      localhost
+- port	        8080
+- origin        http://localhost:8080
+- path	        /v1/product
+- query	        ?name=book&description=test
 
 ##### Sample URLs
 - POST: http://localhost:8080/v1/product?name=book&description=test description&sku=XYZ12345&manufacturer=test manufacturer&quantity=1
