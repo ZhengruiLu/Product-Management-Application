@@ -34,10 +34,15 @@ Authorization - Choose "Basic Auth"
 Username: admin
 Password: password
 
-Please change params as you want.
+Example:
 
-POST: http://localhost:8080/v1/product?name=book&description=test description&sku=XYZ12345&manufacturer=test manufacturer&quantity=1
-GET: http://localhost:8080/v1/product/1
-PUT: http://localhost:8080/v1/product/1?quantity=12
-PATCH: http://localhost:8080/v1/product/1?quantity=10
-DELETE: http://localhost:8080/v1/product/1
+<img src='postman_testing.gif' title='Postman Testing' width='' alt='Postman Testing' />
+
+GIF created with [LiceCap](http://www.cockos.com/licecap/).
+
+Please change params as you want.
+- POST: http://localhost:8080/v1/product?name=book&description=test description&sku=XYZ12345&manufacturer=test manufacturer&quantity=1
+- GET: http://localhost:8080/v1/product/1
+- PUT: http://localhost:8080/v1/product/1?quantity=12
+- PATCH: http://localhost:8080/v1/product/1?quantity=10
+- DELETE: http://localhost:8080/v1/product/1
