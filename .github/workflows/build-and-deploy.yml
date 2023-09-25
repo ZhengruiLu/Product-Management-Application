@@ -4,28 +4,21 @@ on:
   pull_request:
     branches:
       - main
-      - a04-webapp
+      - a07-webapp
+      - a09
 
 jobs:
-  validate-packer-template:
+  run-application-unit-tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Setup HashiCorp Packer
-        uses: hashicorp/setup-packer@v2.0.0
+      - name: Set up JDK 8
+        uses: actions/setup-java@v1
         with:
-          version: latest
+          java-version: 1.8
 
-      - name: touch jar
-        run: touch /tmp/ProductManager-0.0.1-SNAPSHOT.jar
-
-#      - name: touch service
-#        run: touch /tmp/ProductManager.service
-
-      - name: Format Packer Template
-        run: packer fmt scripts/java.pkr.hcl
-
-      - name: Validate Packer Template
-        run: packer validate scripts/java.pkr.hcl
+      - name: Run unit tests
+        working-directory: ./ProductManager
+        run: mvn -Dtest=src/test/java/com.csye6225.productmanager.controller.HealthControllerTest test

@@ -8,7 +8,16 @@
       "artifact_id": "us-west-1:ami-0bedee7540b878310",
       "packer_run_uuid": "c5b2bf74-6e42-5555-f1a8-962d60b9405f",
       "custom_data": null
+    },
+    {
+      "name": "my-ami",
+      "builder_type": "amazon-ebs",
+      "build_time": 1677904109,
+      "files": null,
+      "artifact_id": "us-west-1:ami-0afe53b39107ffe47",
+      "packer_run_uuid": "8905b2f3-9506-caf4-09dc-4d4e24c25052",
+      "custom_data": null
     }
   ],
-  "last_run_uuid": "c5b2bf74-6e42-5555-f1a8-962d60b9405f"
+  "last_run_uuid": "8905b2f3-9506-caf4-09dc-4d4e24c25052"
 }

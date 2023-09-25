@@ -7,7 +7,7 @@ public class DuplicateSkuException extends RuntimeException {
         super(message);
     }
 
-    public static interface IAuthenticationFacade {
+    public interface IAuthenticationFacade {
         Authentication getAuthentication();
     }
 }

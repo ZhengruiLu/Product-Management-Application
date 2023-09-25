@@ -92,6 +92,12 @@ Authorization - Choose "Basic Auth"
 Username: same with created user's username - email
 Password: somepassword
 
+Example:
+
+<img src='postman_testing.gif' title='Postman Testing' width='' alt='Postman Testing' />
+
+GIF created with [LiceCap](http://www.cockos.com/licecap/).
+
 Please change params according to your setting.
 ##### Sample URL and its components
 - URL 	http://localhost:8080/v1/product?name=book&description=test

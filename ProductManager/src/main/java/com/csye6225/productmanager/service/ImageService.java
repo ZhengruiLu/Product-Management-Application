@@ -2,6 +2,7 @@ package com.csye6225.productmanager.service;
 
 import com.csye6225.productmanager.entity.Image;
 import com.csye6225.productmanager.entity.Product;
+import com.csye6225.productmanager.repository.ImageRepository;
 import com.csye6225.productmanager.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,28 +12,21 @@ import java.util.List;
 
 @Service
 @Transactional
-public class ProductService {
-
+public class ImageService {
     @Autowired
-    private ProductRepository repo;
+    private ImageRepository repo;
 
-    public void save(Product product) {
-        repo.save(product);
+    public void save(Image image) {
+        repo.save(image);
     }
 
-    public Product getById(Integer id) {
-        return repo.findById(id).get();
+    public Image getById(Integer id) {
+        return repo.findById(id).orElse(null);
     }
 
     public void deleteById(Integer id) {
         repo.deleteById(id);
     }
 
-    public List<Image> getImagesById(Integer id) {
-        return this.getById(id).getImages();
-    }
 
-    public Image getImagesByImageId(Integer id, Integer imageId) {
-        return getImagesById(id).get(imageId);
-    }
 }

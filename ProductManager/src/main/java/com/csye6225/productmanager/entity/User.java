@@ -11,7 +11,6 @@ import java.util.List;
 @Entity
 @Table(name = "user")
 public class User {
-
     @JsonIgnore
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "user")
     private List<Product> product;
@@ -25,7 +24,7 @@ public class User {
     private String lastName;
     @Column(nullable = false, length = 64)
     private String password;
-    @Column(nullable = false, length = 45)
+    @Column(nullable = false, length = 45, unique = true)
     private String username;
 
     @Column(name = "account_created", updatable = false, columnDefinition="TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -45,11 +44,13 @@ public class User {
 
     }
 
-    public User(String firstName, String lastName, String password, String username) {
+    public User(Integer id, String firstName, String lastName, String username, Timestamp account_created, Timestamp account_updated) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.password = password;
         this.username = username;
+        this.account_created = account_created;
+        this.account_updated = account_updated;
     }
 
     public void setId(Integer id) {

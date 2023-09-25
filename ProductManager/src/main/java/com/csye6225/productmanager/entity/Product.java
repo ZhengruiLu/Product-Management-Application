@@ -1,15 +1,15 @@
 package com.csye6225.productmanager.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.Fetch;
-import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import java.sql.Timestamp;
+import java.util.List;
 
 @JsonIgnoreProperties({"owner_user"})
 @Entity
@@ -44,13 +44,18 @@ public class Product {
     @Column(name = "date_last_updated")
     private Timestamp date_last_updated;
 
-    @Column(name = "owner_user_id")
-    private Integer ownerUserId;
-
-
     @ManyToOne
     @JoinColumn(name = "owner_user", nullable = false, updatable = false)
     private User user;
+
+    @Column(name = "owner_user_id")
+    private Integer ownerUserId;
+
+//    @JsonIgnore
+//    @OneToMany(fetch = FetchType.EAGER, mappedBy = "product")
+    @OneToMany(mappedBy = "image_product", cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private List<Image> images;
 
     public Integer getOwnerUserId() {
         return ownerUserId;
@@ -68,6 +73,20 @@ public class Product {
 
 
     public Product() {
+    }
+
+
+
+    public Product(Integer id, String name, String description, String sku, String manufacturer, Integer quantity, Timestamp date_added, Timestamp date_last_updated, Integer ownerUserId) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.sku = sku;
+        this.manufacturer = manufacturer;
+        this.quantity = quantity;
+        this.date_added = date_added;
+        this.date_last_updated = date_last_updated;
+        this.ownerUserId = ownerUserId;
     }
 
     public Integer getId() {
@@ -134,4 +153,15 @@ public class Product {
         this.date_last_updated = date_last_updated;
     }
 
+    public void setOwnerUserId(Integer ownerUserId) {
+        this.ownerUserId = ownerUserId;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
 }
