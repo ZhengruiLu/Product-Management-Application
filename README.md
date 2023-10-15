@@ -1,6 +1,6 @@
 # Project - *Product Management Application* - Network Structures and Cloud Computing
 
-**Product Management Application** is a secure application for managing user account and product info. A Web Application using Sprint Boot that meets Cloud-Native Web Application Requirements. It implemented RESTful APIs that return with proper HTTP status codes based on user stories.
+**Product Management Application** is a secure application for managing user account and product info. A Web Application using Sprint Boot that meets Cloud-Native Web Application Requirements. It implemented RESTful APIs that return with proper HTTP status codes based on user stories. It is deployed by launching AMI using AWS Amazon Linux 2 via Packer. Setup autorun using Systemd, link: https://github.com/ZhengruiLu/AWS-Infra-Assistant-PM-Application
 
 Submitted by: **Zhengrui Lu**
 
